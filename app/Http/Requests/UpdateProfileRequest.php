@@ -26,6 +26,7 @@ class UpdateProfileRequest extends FormRequest
             'last_name' => 'string|max:255',
             'birthdate' => 'date',
             'address' => 'string',
+            'Sport' => 'string',
             'phone_number' => 'string|unique:profiles,phone_number',
             'gender' => 'in:male,female',
             'height' => 'integer|min:0',

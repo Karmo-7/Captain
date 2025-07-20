@@ -27,10 +27,12 @@ class ProfileRequest extends FormRequest
             'birthdate' => 'required|date',
             'address' => 'required|string',
             'phone_number' => 'required|unique:profiles,phone_number,integer',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'nationality' => 'required|string',
             'gender' => 'required|in:male,female',
             'height' => 'required|integer|min:0',
             'weight' => 'required|integer|min:0',
-            'sport'=>'required|string',
+            'Sport' => 'required|string',
             'emergency_contact_information' => 'nullable|string',
             'injuries' => 'nullable|string',
             'positions_played' => 'required|string',
@@ -38,7 +40,7 @@ class ProfileRequest extends FormRequest
             'years_of_experience' => 'required|integer|min:0',
             'previous_teams' => 'nullable|string',
             'extra_notes' => 'nullable|string',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
 
         ];
     }
