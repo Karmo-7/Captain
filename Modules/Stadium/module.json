@@ -1,0 +1,11 @@
+{
+    "name": "Stadium",
+    "alias": "stadium",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Stadium\\Providers\\StadiumServiceProvider"
+    ],
+    "files": []
+}

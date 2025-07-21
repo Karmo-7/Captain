@@ -27,19 +27,17 @@ class UpdateProfileRequest extends FormRequest
             'birthdate' => 'date',
             'address' => 'string',
             'Sport' => 'string',
-            'phone_number' => 'string|unique:profiles,phone_number',
+            'phone_number' => 'unique:profiles|numeric|digits_between:7,15',
             'gender' => 'in:male,female',
             'height' => 'integer|min:0',
             'weight' => 'integer|min:0',
-            'sport'=>'string',
-            'emergency_contact_information' => 'string',
-            'injuries' => 'string',
             'positions_played' => 'string',
-            'notable_achievements' => 'string',
-            'years_of_experience' => 'integer|min:0',
-            'previous_teams' => 'string',
-            'extra_notes' => 'string',
             'avatar' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'years_of_experience' => 'integer|min:0',
+            'notable_achievements' => 'string',
+            'previous_teams' => 'string',
+
+
 
         ];
     }

@@ -9,9 +9,10 @@ class Sport extends Model
 {
     use HasFactory;
 
+
     protected $fillable = ['name','photo'];
 
-    
+
 
     protected static function newFactory()
     {

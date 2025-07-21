@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Http\Request;
+use Modules\Stadium\Http\Controllers\StadiumRequestController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::middleware('auth:api')->get('/stadium', function (Request $request) {
+    return $request->user();
+});
+
+
+Route::middleware(['auth:api','role:admin'])->prefix('stadium')->group(function(){
+    Route::post('/replyask/{id}',[StadiumRequestController::class,'ReplyAsk']);
+    Route::get('/viewAllRequest',[StadiumRequestController::class,'viewall']);
+});
+
+
+
+Route::middleware(['auth:api', 'role:stadium_owner'])->prefix('stadium')->group(function () {
+    Route::post('/addrequest', [StadiumRequestController::class,'AddRequest']);
+    Route::delete('/deleteRequest/{id}', [StadiumRequestController::class, 'delete']);
+
+});
+
+
+Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');

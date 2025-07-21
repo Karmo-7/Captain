@@ -17,6 +17,9 @@ use Modules\Sport\Http\Controllers\SportController;
 Route::middleware(['auth:api', 'role:admin'])->prefix('sport')->group(function () {
     Route::post('/create', [SportController::class, 'create']);
     Route::post('/update/{id}',[SportController::class,'update']);
+    Route::delete('/delete/{id}',[SportController::class,'delete']);
+    Route::get('/view/{id}',[SportController::class,'view']);
+    Route::get('/viewall',[SportController::class,'viewall']);
 
 
 
