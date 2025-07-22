@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Modules\Stadium\Entities\Stadium;
+use Modules\Stadium\Entities\StadiumRequest;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -21,7 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        
+
         'email',
         'password',
     ];
@@ -47,5 +49,13 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
     public function profile(){
         return $this->hasOne(Profile::class);
+    }
+
+    public function stadiumRequest(){
+        return $this->hasMany(StadiumRequest::class);
+    }
+
+    public function stadiums(){
+        return $this->hasMany(Stadium::class);
     }
 }

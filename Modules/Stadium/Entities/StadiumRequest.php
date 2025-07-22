@@ -2,8 +2,10 @@
 
 namespace Modules\Stadium\Entities;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Sport\Entities\Sport;
 
 class StadiumRequest extends Model
 {
@@ -14,6 +16,16 @@ class StadiumRequest extends Model
     protected $casts = [
         'photos' => 'array',
     ];
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function sport(){
+        return $this->belongsTo(Sport::class);
+    }
+
+
+
     protected static function newFactory()
     {
         return \Modules\Stadium\Database\factories\StadiumRequestFactory::new();

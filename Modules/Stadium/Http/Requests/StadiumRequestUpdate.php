@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Sport\Http\Requests;
+namespace Modules\Stadium\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class updaterequestsport extends FormRequest
+class StadiumRequestUpdate extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,11 +14,16 @@ class updaterequestsport extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'string|max:255|unique:sports',
-            'photo' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'max_player_per_team' => 'integer|min:0',
+            'sport_id' => 'exists:sports,id',
+            'name' => 'string|max:255',
+            'location' => 'string|max:255',
+            'description' => 'string',
+            'Length' => 'numeric|min:1',
+            'Width' => 'numeric|min:1',
+            'owner_number' => 'numeric|digits_between:7,15',
         ];
     }
+
 
     /**
      * Determine if the user is authorized to make this request.

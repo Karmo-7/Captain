@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Modules\Stadium\Http\Controllers\StadiumController;
 use Modules\Stadium\Http\Controllers\StadiumRequestController;
 
 /*
@@ -22,15 +23,25 @@ Route::middleware('auth:api')->get('/stadium', function (Request $request) {
 Route::middleware(['auth:api','role:admin'])->prefix('stadium')->group(function(){
     Route::post('/replyask/{id}',[StadiumRequestController::class,'ReplyAsk']);
     Route::get('/viewAllRequest',[StadiumRequestController::class,'viewall']);
+
 });
 
-
+Route::delete('/deleteRequest/{id}', [StadiumRequestController::class, 'deleteRequest'])
+    ->middleware(['auth:api', 'role:admin|stadium_owner']);
 
 Route::middleware(['auth:api', 'role:stadium_owner'])->prefix('stadium')->group(function () {
     Route::post('/addrequest', [StadiumRequestController::class,'AddRequest']);
-    Route::delete('/deleteRequest/{id}', [StadiumRequestController::class, 'delete']);
+    Route::post('/update/{id}', [StadiumController::class, 'update']);
+
+
 
 });
 
+Route::prefix('stadium')->middleware('auth:api')->group(function () {
+    Route::get('/viewRequest/{id}', [StadiumRequestController::class, 'view']);
+    Route::get('/viewall', [StadiumController::class, 'viewall']);
+    Route::get('/view/{id}', [StadiumController::class, 'view']);
+    Route::delete('/delete/{id}', [StadiumController::class, 'delete'])
+        ->middleware('role:stadium_owner');
 
-Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
+});
