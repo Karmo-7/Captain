@@ -10,10 +10,13 @@ use Modules\Stadium\Entities\StadiumRequest;
 use Modules\Stadium\Http\Requests\StadiumRequestForm;
 use Illuminate\Support\Facades\Storage;
 use Modules\Stadium\Http\Requests\StadiumRequestUpdateForm;
+use App\Traits\ImageDeletable;
+use App\Traits\ImageUploadable;
+
 
 class StadiumRequestController extends Controller
 {
-
+    use ImageDeletable, ImageUploadable;
 
 
     public function AddRequest(StadiumRequestForm $request)
@@ -50,10 +53,7 @@ class StadiumRequestController extends Controller
         // رفع الصور وتخزين المسارات
         $photoPaths = [];
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('stadiums', 'public');
-                $photoPaths[] = Storage::url($path);
-            }
+            $photoPaths = $this->uploadImages($request->file('photos'), 'stadiums');
         }
 
         $validated['photos'] = $photoPaths;
@@ -85,15 +85,9 @@ class StadiumRequestController extends Controller
         $newStatus = $validated['status'] ?? null;
 
         // حالة الرفض: حذف الصور أولًا
-        if ($newStatus === 'rejected' && is_array($ask->photos)) {
-            foreach ($ask->photos as $photo) {
-                $relativePath = str_replace('/storage/', '', $photo);
-                Storage::disk('public')->delete($relativePath);
-            }
-            $validated['photos'] = null;
-        }
+        $this->deleteImages($ask->photos ?? []);
 
-        // تحديث الطلب بعد التحقق من الحالة
+
         $ask->update($validated);
 
         // حالة القبول: إنشاء ملعب بعد تحديث الطلب
@@ -148,12 +142,7 @@ class StadiumRequestController extends Controller
             ], 401);
         }
 
-        if (is_array($ask->photos)) {
-            foreach ($ask->photos as $photo) {
-                $relativePath = str_replace('/storage/', '', $photo);
-                Storage::disk('public')->delete($relativePath);
-            }
-        }
+        $this->deleteImages($ask->photos ?? []);
 
         $ask->delete();
 

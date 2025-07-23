@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Stadium\Entities\Stadium;
 use Modules\Stadium\Http\Requests\StadiumRequestUpdate;
+use App\Traits\ImageDeletable;
+
 
 class StadiumController extends Controller
 {
+    use ImageDeletable;
+
     public function update(StadiumRequestUpdate $request, $id){
         $stadium=Stadium::find($id);
         if (!$stadium) {
@@ -40,7 +44,7 @@ class StadiumController extends Controller
     }
 
     public function view($id){
-        $stadium=Stadium::find($id);
+        $stadium=Stadium::with('facility')->find($id);
         if (!$stadium) {
             return response()->json([
                 'status' => false,
@@ -72,17 +76,17 @@ class StadiumController extends Controller
 
     }
 
-    public function delete( $id)
+    public function delete($id)
     {
         $stadium = Stadium::find($id);
         if (!$stadium) {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
-                'message' => 'stadium not found to delete it.'
+                'message' => 'Stadium not found to delete it.'
             ]);
         }
-        if (auth()->id() !== $stadium->user_id &&!auth()->user()->hasRole('admin')) {
+        if (auth()->id() !== $stadium->user_id) {
             return response()->json([
                 'status' => false,
                 'status_code' => 401,
@@ -90,14 +94,13 @@ class StadiumController extends Controller
             ], 401);
         }
 
+        $this->deleteImages($stadium->photos ?? []);
         $stadium->delete();
         return response()->json([
             'status' => true,
             'status_code' => 200,
             'message' => 'Stadium deleted successfully',
-
-        ], 200);
-
+        ]);
     }
 
 

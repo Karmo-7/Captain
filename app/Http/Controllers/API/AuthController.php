@@ -110,6 +110,7 @@ class AuthController extends Controller
             'data' => [
                 'token' => $token,
                 'user' => $user,
+                'roles' => $user->getRoleNames(),
                 'profile_id' => $profile ? $profile->id : 0
 
             ]
