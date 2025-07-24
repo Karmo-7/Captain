@@ -284,7 +284,7 @@ class AuthController extends Controller
                 event(new Verified($user));
             }
 
-            if (!$user->hasAnyRole(['admin', 'player', 'stadium_owner'])) {
+            if (!$user->hasAnyRole([ 'player', 'stadium_owner'])) {
                 $user->assignRole('player');
             }
 
@@ -298,6 +298,7 @@ class AuthController extends Controller
                 'data' => [
                     'token' => $token,
                     'user' => $user,
+                    'roles' => $user->getRoleNames(),
                     'profile_id' => $profile ? $profile->id : 0,
                 ]
             ], 200);
