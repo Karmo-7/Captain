@@ -3,5 +3,6 @@
     "Stadium": true,
     "Team": true,
     "Invitations": true,
-    "Ads": true
+    "Ads": true,
+    "Facilities": true
 }

@@ -10,6 +10,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Modules\Invitations\Entities\Team_Usesrinv;
+use Modules\Stadium\Entities\Stadium;
+use Modules\Stadium\Entities\StadiumRequest;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -88,4 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(\Modules\Ads\Entities\Ad::class);
     }
+    public function stadiumRequest(){
+        return $this->hasMany(StadiumRequest::class);
+    }
+
+    public function stadiums(){
+        return $this->hasMany(Stadium::class);
+    }
+
+
+
 }

@@ -18,21 +18,14 @@ return new class extends Migration
             $table->string('address');
             $table->bigInteger('phone_number')->unique();
             $table->string('avatar')->nullable();
-            $table->string('nationality');
             $table->enum('gender', ['male', 'female']);
             $table->integer('height'); //cm
             $table->integer('weight'); // بالـ kg
             $table->string('Sport');
-
-            $table->text('emergency_contact_information')->nullable();
-            $table->text('injuries')->nullable();
             $table->string('positions_played');
             $table->text('notable_achievements')->nullable();
-
             $table->integer('years_of_experience');
             $table->text('previous_teams')->nullable();
-            $table->longText('extra_notes')->nullable();
-
             $table->timestamps();
         });
     }
