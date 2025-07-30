@@ -25,8 +25,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-
+Route::get('/users/{id}', function ($id) {
+    return User::with('ads')->findOrFail($id);
+});
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
@@ -63,7 +64,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-    
+
 Route::get('/test/verify-link/{userId}', function ($userId) {
     $user = User::findOrFail($userId);
 

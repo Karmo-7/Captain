@@ -24,6 +24,8 @@ return new class extends Migration
             $table->decimal('Length');
             $table->decimal('Width');
             $table->bigInteger('owner_number');
+            $table->string('start_time', 45);
+            $table->string('end_time', 45);
             $table->timestamps();
         });
     }

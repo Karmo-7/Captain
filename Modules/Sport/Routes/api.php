@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Modules\Sport\Http\Controllers\SportController;
+use Illuminate\Support\Facades\Route;
+use Modules\Sport\Http\Controllers\MatchSlotController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,5 +25,5 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('sport')->group(function (
     Route::get('/viewall',[SportController::class,'viewall']);
 
 
-
+  
 });

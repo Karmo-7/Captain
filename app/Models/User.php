@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Modules\Invitations\Entities\Team_Usesrinv;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -21,9 +22,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        
+
         'email',
         'password',
+        'type',
     ];
 
     /**
@@ -47,5 +49,43 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
     public function profile(){
         return $this->hasOne(Profile::class);
+    }
+
+     public function teamAsCaptain()
+    {
+        return $this->hasOne(\Modules\Team\Entities\Team::class, 'captin_id');
+    }
+
+    public function leagues()
+{
+    return $this->hasMany(\Modules\Invitations\Entities\League::class, 'created_by');
+}
+
+ // الدعوات التي استلمها هذا المستخدم من فرق
+    public function receivedInvitations()
+    {
+        return $this->hasMany(Team_Usesrinv::class, 'receiver_id');
+    }
+
+    // الطلبات التي أرسلها هذا المستخدم للفرق (طلبات انضمام)
+    public function sentJoinRequests()
+    {
+        return $this->hasMany(Team_Usesrinv::class, 'receiver_id');
+    }
+
+    // كل الدعوات المرتبطة بالمالك
+    public function teamInvitations()
+    {
+        return $this->hasMany(\Modules\Invitations\Entities\Team_Ownerinv::class, 'owner_id');
+    }
+
+    public function userMatches()
+{
+    return $this->hasMany(\Modules\Invitations\Entities\UserMatch::class, 'user_id');
+
+}
+ public function ads()
+    {
+        return $this->hasMany(\Modules\Ads\Entities\Ad::class);
     }
 }

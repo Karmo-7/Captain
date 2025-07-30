@@ -24,6 +24,7 @@ class AuthController extends Controller
         try {
             $request->validate([
                 'email' => 'required|email|unique:users',
+                'type'=> 'required|in:admin,player,stadium_owner',
                 'password' => [
                     'required',
                     'min:8',
@@ -36,6 +37,7 @@ class AuthController extends Controller
             $user = User::create([
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                 'type' => $request->type,
             ]);
 
             $user->assignRole($request->role);

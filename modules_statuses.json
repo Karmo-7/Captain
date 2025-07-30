@@ -1,4 +1,7 @@
 {
     "Sport": true,
-    "Stadium": true
+    "Stadium": true,
+    "Team": true,
+    "Invitations": true,
+    "Ads": true
 }

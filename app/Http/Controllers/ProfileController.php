@@ -68,8 +68,8 @@ class ProfileController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('avatar')) {
-            if ($profile->avatar && \Storage::disk('public')->exists($profile->avatar)) {
-                \Storage::disk('public')->delete($profile->avatar);
+            if ($profile->avatar && Storage::disk('public')->exists($profile->avatar)) {
+                Storage::disk('public')->delete($profile->avatar);
             }
 
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
@@ -108,8 +108,8 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        if ($profile->avatar && \Storage::disk('public')->exists($profile->avatar)) {
-            \Storage::disk('public')->delete($profile->avatar);
+        if ($profile->avatar && Storage::disk('public')->exists($profile->avatar)) {
+            Storage::disk('public')->delete($profile->avatar);
         }
 
         $profile->delete();

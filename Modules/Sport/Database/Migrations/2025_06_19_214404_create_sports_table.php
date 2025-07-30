@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('photo');
+             $table->integer('max_players_per_team');
             $table->timestamps();
         });
     }

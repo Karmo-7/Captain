@@ -16,6 +16,11 @@ class Sport extends Model
 
     protected static function newFactory()
     {
-        return \Modules\Sport\Database\factories\SportFactory::new();
+       // return \Modules\Sport\Database\factories\SportFactory::new();
+    }
+
+     public function teams()
+    {
+        return $this->hasMany(\Modules\Team\Entities\Team::class);
     }
 }

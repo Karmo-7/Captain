@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Modules\Stadium\Http\Controllers\StadiumRequestController;
+use Modules\Stadium\Http\Controllers\StadiumSlotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +16,16 @@ use Modules\Stadium\Http\Controllers\StadiumRequestController;
 |
 */
 
-Route::middleware('auth:api')->get('/stadium', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+
+    Route::get('/stadium', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::apiResource('stadium-slots', StadiumSlotController::class);
+    Route::get('stadium-slots/stadium/{stadium_id}', [StadiumSlotController::class, 'getSlotsByStadium']);
+
+
 });
 
 
@@ -34,3 +44,6 @@ Route::middleware(['auth:api', 'role:stadium_owner'])->prefix('stadium')->group(
 
 
 Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
+
+
+

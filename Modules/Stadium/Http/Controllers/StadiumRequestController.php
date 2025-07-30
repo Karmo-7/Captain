@@ -70,7 +70,7 @@ class StadiumRequestController extends Controller
 
         if (isset($validated['status']) && $validated['status'] === 'rejected' && is_array($ask->photos)) {
             foreach ($ask->photos as $photo) {
-                $relativePath = str_replace('/storage/', '', $photo);
+                $relativePath = str_replace('storage/', '', $photo);
                 Storage::disk('public')->delete($relativePath);
             }
             $ask->photos = null;
