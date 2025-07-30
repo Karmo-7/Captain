@@ -57,5 +57,6 @@ Route::prefix('stadium')->middleware('auth:api')->group(function () {
 Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
 
 
+//this is for testing
 
 });
