@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('owner_id');
             $table->unsignedBigInteger('league_id');
+             $table->boolean('is_team');
 
             $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
             $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');

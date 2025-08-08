@@ -11,7 +11,7 @@ class StadiumRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'sport_id', 'name', 'location', 'description', 'photos', 'Length', 'Width', 'owner_number','start_time','end_time','status','admin_notes'];
+    protected $fillable = ['user_id', 'sport_id', 'name', 'location', 'description', 'photos', 'Length', 'Width', 'owner_number','start_time','end_time','status','admin_notes','price','deposit','duration'];
 
     protected $casts = [
         'photos' => 'array',
@@ -28,6 +28,6 @@ class StadiumRequest extends Model
 
     protected static function newFactory()
     {
-        return \Modules\Stadium\Database\factories\StadiumRequestFactory::new();
+       // return \Modules\Stadium\Database\factories\StadiumRequestFactory::new();
     }
 }

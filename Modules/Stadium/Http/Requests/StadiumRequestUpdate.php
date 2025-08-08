@@ -21,6 +21,9 @@ class StadiumRequestUpdate extends FormRequest
             'Length' => 'numeric|min:1',
             'Width' => 'numeric|min:1',
             'owner_number' => 'numeric|digits_between:7,15',
+            'price' => 'string|max:255',
+            'price' => 'required|numeric|min:0',
+             'deposit' => 'required|numeric|min:0',
         ];
     }
 

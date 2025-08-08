@@ -11,13 +11,13 @@ use Modules\Sport\Entities\Sport;
 class Stadium extends Model
 {
     use HasFactory;
-     
+
  public function slots()
     {
         return $this->hasMany(StadiumSlot::class, 'stadium_id', 'id');
     }
 
-    protected $fillable = ['user_id','sport_id','name','location','description','photos','Length','Width','owner_number'];
+    protected $fillable = ['user_id','sport_id','name','location','description','photos','Length','Width','owner_number','price','deposit','duration'];
     protected $table='stadiums';
 
     protected $casts = [
