@@ -194,12 +194,16 @@ class StadiumRequestController extends Controller
 
         if ($asks->isEmpty()) {
             return response()->json([
+                'status' => false,
+                'status_code' => 404,
                 'message' => 'You have no asks submitted.'
             ], 404);
         }
 
         return response()->json([
             'message' => 'Asks retrieved successfully.',
+            'status' => true,
+            'status_code' => 200,
             'data' => $asks
         ]);
     }
@@ -211,11 +215,15 @@ class StadiumRequestController extends Controller
 
         if ($stadiums->isEmpty()) {
             return response()->json([
+                'status' => false,
+                'status_code' => 404,
                 'message' => 'You have no stadium improved.'
             ], 404);
         }
 
         return response()->json([
+            'status' => true,
+            'status_code' => 200,
             'message' => 'Stadiums retrieved successfully.',
             'data' => $stadiums
         ]);
