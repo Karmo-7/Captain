@@ -27,6 +27,9 @@ return new class extends Migration
             $table->string('start_time', 45);
             $table->string('end_time', 45);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+           $table->decimal('price', 8, 2);
+            $table->decimal('deposit', 8, 2);
+            $table->integer('duration');
             $table->text('admin_notes')->nullable();
             $table->timestamps();
         });

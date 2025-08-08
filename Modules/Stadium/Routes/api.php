@@ -60,3 +60,4 @@ Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'
 //this is for testing
 
 });
+Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);

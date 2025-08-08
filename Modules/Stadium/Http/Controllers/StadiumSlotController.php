@@ -248,4 +248,63 @@ class StadiumSlotController extends Controller
     return $this->successResponse($slots, "أوقات الملعب {$stadium->name} تم جلبها بنجاح");
 }
 
+
+
+public function generateSlots($stadium_id)
+{
+    $stadium = Stadium::find($stadium_id);
+
+    if (!$stadium) {
+        return $this->errorResponse("الملعب غير موجود", 404);
+    }
+
+    try {
+        $startTime = \Carbon\Carbon::parse($stadium->start_time);
+        $endTime = \Carbon\Carbon::parse($stadium->end_time);
+
+
+        $durationParts = explode(':', $stadium->duration);
+        if (count($durationParts) !== 2) {
+            return $this->errorResponse("المدة (duration) غير صالحة. يجب أن تكون بصيغة HH:MM", 422);
+        }
+
+        $hours = (int) $durationParts[0];
+        $minutes = (int) $durationParts[1];
+        $durationInMinutes = $hours * 60 + $minutes;
+
+        $slots = [];
+
+        while ($startTime->copy()->addMinutes($durationInMinutes)->lte($endTime)) {
+            $slotStart = $startTime->format('H:i');
+            $slotEnd = $startTime->copy()->addMinutes($durationInMinutes)->format('H:i');
+
+           
+            $exists = StadiumSlot::where('stadium_id', $stadium->id)
+                ->where('start_time', $slotStart)
+                ->where('end_time', $slotEnd)
+                ->exists();
+
+            if (!$exists) {
+                $slots[] = StadiumSlot::create([
+                    'stadium_id' => $stadium->id,
+                    'start_time' => $slotStart,
+                    'end_time' => $slotEnd,
+                    'status' => 'available',
+                ]);
+            }
+
+            $startTime->addMinutes($durationInMinutes);
+        }
+
+        if (empty($slots)) {
+            return $this->successResponse([], "لا توجد أوقات جديدة تم إنشاؤها، قد تكون جميعها موجودة بالفعل.");
+        }
+
+        return $this->successResponse($slots, "تم إنشاء الأوقات بنجاح للملعب {$stadium->name}.");
+    } catch (\Exception $e) {
+        return $this->errorResponse("حدث خطأ أثناء إنشاء الأوقات", 500, $e->getMessage());
+    }
+}
+
+
 }

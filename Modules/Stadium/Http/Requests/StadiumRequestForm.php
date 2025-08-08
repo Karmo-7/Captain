@@ -23,8 +23,11 @@ class StadiumRequestForm extends FormRequest
             'Length' => 'required|numeric|min:1',
             'Width' => 'required|numeric|min:1',
             'owner_number' => 'required|numeric|digits_between:7,15',
-             'start_time' => 'required|string|max:45',
+            'start_time' => 'required|string|max:45',
             'end_time' => 'required|string|max:45',
+             'price' => 'string|max:255',
+            'price' => 'required|numeric|min:0',
+             'deposit' => 'required|numeric|min:0',,
         ];
     }
 

@@ -26,6 +26,9 @@ return new class extends Migration
             $table->bigInteger('owner_number');
             $table->string('start_time', 45);
             $table->string('end_time', 45);
+           $table->decimal('price', 8, 2);
+            $table->decimal('deposit', 8, 2);
+            $table->integer('duration');
             $table->timestamps();
         });
     }

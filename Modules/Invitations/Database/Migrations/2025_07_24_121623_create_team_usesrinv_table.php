@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('sent_at', 45)->nullable();
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('receiver_id');
+             $table->boolean('is_team');
 
             $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
             $table->foreign('receiver_id')->references('id')->on('users')->onDelete('cascade');
