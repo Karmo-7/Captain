@@ -21,18 +21,19 @@ return new class extends Migration
             $table->string('location');
             $table->text('description');
             $table->json('photos')->nullable();
-            $table->decimal('Length');
-            $table->decimal('Width');
+            $table->decimal('Length', 5, 2);
+            $table->decimal('Width', 5, 2);
             $table->bigInteger('owner_number');
-            $table->string('start_time', 45);
-            $table->string('end_time', 45);
+            $table->time('start_time');
+            $table->time('end_time');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->decimal('price', 8, 2);
             $table->decimal('deposit', 8, 2);
-            $table->integer('duration');
+            $table->string('duration'); 
             $table->text('admin_notes')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

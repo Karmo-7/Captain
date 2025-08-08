@@ -11,7 +11,7 @@ class StadiumRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'sport_id', 'name', 'location', 'description', 'photos', 'Length', 'Width', 'owner_number','start_time','end_time','status','admin_notes','price','deposit','duration'];
+    protected $fillable = ['user_id', 'sport_id', 'name', 'location', 'description', 'photos', 'Length', 'Width', 'owner_number','start_time','end_time','status','admin_notes','price','deposit','duration','latitude', 'longitude'];
 
     protected $casts = [
         'photos' => 'array',

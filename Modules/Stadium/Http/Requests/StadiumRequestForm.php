@@ -19,15 +19,17 @@ class StadiumRequestForm extends FormRequest
             'location' => 'required|string|max:255',
             'description' => 'required|string',
             'photos' => 'nullable|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // لكل صورة
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'Length' => 'required|numeric|min:1',
             'Width' => 'required|numeric|min:1',
             'owner_number' => 'required|numeric|digits_between:7,15',
-            'start_time' => 'required|string|max:45',
-            'end_time' => 'required|string|max:45',
-            'price' => 'string|max:255',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'price' => 'required|numeric|min:0',
             'deposit' => 'required|numeric|min:0',
-            'duration' => 'required|int|min:0',
+            'duration' => 'required|numeric|min:1',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ];
     }
 
