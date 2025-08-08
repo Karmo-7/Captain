@@ -14,6 +14,7 @@ class Profile extends Model
     protected $fillable =
      [
     'user_id',
+    'team_id',
     'first_name',
     'last_name',
     'birthdate',
@@ -22,16 +23,12 @@ class Profile extends Model
     'gender',
     'height',
     'weight',
-    'emergency_contact_information',
-    'injuries',
     'positions_played',
     'notable_achievements',
     'years_of_experience',
     'previous_teams',
-    'extra_notes',
     'avatar',
-    'national_id',
-
+    'Sport'
 ];
 
     public function user(){
