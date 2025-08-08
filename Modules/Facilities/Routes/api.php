@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/facilities', function (Request $request) {
 });
 
 Route::middleware(['auth:api'])->prefix('/facilities')->group(function (){
-    Route::post('/create',[FacilityController::class,'create'])->middleware('role:owner_stadium');
+    Route::post('/create',[FacilityController::class,'create'])->middleware('role:stadium_owner');
     Route::post('/update/{id}', [FacilityController::class, 'update'])->middleware('role:stadium_owner');
     Route::get('/view/{id}', [FacilityController::class, 'view']);
     Route::get('/viewall/{id}', [FacilityController::class, 'viewall']);

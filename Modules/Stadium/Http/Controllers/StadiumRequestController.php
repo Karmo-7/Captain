@@ -186,6 +186,41 @@ class StadiumRequestController extends Controller
         ]);
 
     }
+
+    public function view_my_asks()
+    {
+        $userId = auth()->id();
+        $asks = StadiumRequest::where('user_id', $userId)->get();
+
+        if ($asks->isEmpty()) {
+            return response()->json([
+                'message' => 'You have no asks submitted.'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Asks retrieved successfully.',
+            'data' => $asks
+        ]);
+    }
+
+    public function view_my_stadium()
+    {
+        $userId = auth()->id();
+        $stadiums = Stadium::where('user_id', $userId)->get();
+
+        if ($stadiums->isEmpty()) {
+            return response()->json([
+                'message' => 'You have no stadium improved.'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Stadiums retrieved successfully.',
+            'data' => $stadiums
+        ]);
+    }
+
     public function viewall(){
         $ask = StadiumRequest::all();
         return response()->json([

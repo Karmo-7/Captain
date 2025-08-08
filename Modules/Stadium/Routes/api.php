@@ -42,7 +42,8 @@ Route::delete('/deleteRequest/{id}', [StadiumRequestController::class, 'deleteRe
 Route::middleware(['auth:api', 'role:stadium_owner'])->prefix('stadium')->group(function () {
     Route::post('/addrequest', [StadiumRequestController::class,'AddRequest']);
     Route::post('/update/{id}', [StadiumController::class, 'update']);
-
+    Route::get('/view_my_asks', [StadiumRequestController::class, 'view_my_asks']);
+    Route::get('/view_my_stadium', [StadiumRequestController::class, 'view_my_stadium']);
 
 
 });

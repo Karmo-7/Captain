@@ -4,5 +4,6 @@
     "Team": true,
     "Invitations": true,
     "Ads": true,
-    "Facilities": true
+    "Facilities": true,
+    "Book": true
 }
