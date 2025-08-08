@@ -100,7 +100,7 @@ class ProfileController extends Controller
             ], 404);
         }
 
-        if (auth()->id() !== $profile->user_id) {
+        if (auth()->id() !== $profile->user_id && !auth()->user()->hasRole('admin')) {
             return response()->json([
                 'status' => false,
                 'status_code' => 401,

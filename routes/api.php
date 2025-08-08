@@ -47,19 +47,22 @@ Route::middleware('auth:api')->group(function () {
     Route::middleware(['auth:api', 'role:admin'])->get('/admin', function () {
         return 'مرحبا أيها المدير';
     });
+Route::middleware(['auth:api'])->group(function () {
 
-    Route::middleware(['auth:api'])->group(function () {
-        Route::prefix('profile')->middleware(['role:player'])->group(function () {
-            Route::post('/create', [ProfileController::class, 'create']);
-            Route::put('/update/{id}', [ProfileController::class, 'update']);
-            Route::delete('/delete/{id}', [ProfileController::class, 'delete']);
-            Route::get('/view/{id}', [ProfileController::class, 'view']);
-
-        });
+    Route::prefix('profile')->middleware(['role:player'])->group(function () {
+        Route::post('/create', [ProfileController::class, 'create']);
+        Route::put('/update/{id}', [ProfileController::class, 'update']);
+        Route::delete('/delete/{id}', [ProfileController::class, 'delete']);
+        Route::get('/view/{id}', [ProfileController::class, 'view']);
     });
 
-Route::get('/profile/viewall', [ProfileController::class, 'viewall'])->middleware(['auth:api', 'role:admin']);//هاد للادمن بالاخير
+    Route::prefix('profile')->middleware(['role:admin'])->group(function () {
+        Route::get('/viewall', [ProfileController::class, 'viewall']);
+        Route::delete('/delete/{id}', [ProfileController::class, 'delete']);
+        Route::get('/view/{id}', [ProfileController::class, 'view']);
+    });
 
+});
 
 
 
