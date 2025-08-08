@@ -86,7 +86,7 @@ class StadiumController extends Controller
                 'message' => 'Stadium not found to delete it.'
             ]);
         }
-        if (auth()->id() !== $stadium->user_id) {
+        if (auth()->id() !== $stadium->user_id && !auth()->user()->hasRole('admin') ) {
             return response()->json([
                 'status' => false,
                 'status_code' => 401,
