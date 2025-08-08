@@ -16,7 +16,7 @@ class updaterequestsport extends FormRequest
         return [
             'name' => 'string|max:255|unique:sports',
             'photo' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'max_player_per_team' => 'integer|min:0',
+            'max_players_per_team' => 'integer|min:0',
         ];
     }
 

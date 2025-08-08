@@ -16,7 +16,7 @@ class requestsport extends FormRequest
         return [
             'name'=>'required|string|max:255|unique:sports',
             'photo'=>'required|image|mimes:jpeg,png,jpg|max:2048',
-            'max_player_per_team'=>'required|integer|min:0',
+            'max_players_per_team'=>'required|integer|min:0',
         ];
     }
 
