@@ -84,20 +84,25 @@ class StadiumRequestController extends Controller
         $validated = $request->validated();
         $newStatus = $validated['status'] ?? null;
 
-        if (isset($validated['status']) && $validated['status'] === 'rejected' && is_array($ask->photos)) {
-            foreach ($ask->photos as $photo) {
-                $relativePath = str_replace('storage/', '', $photo);
-                Storage::disk('public')->delete($relativePath);
-            }
-            $ask->photos = null;
+        // لو في صور جديدة
+        if ($request->hasFile('photos')) {
+            // حذف الصور القديمة
+            $this->deleteImages($ask->photos ?? []);
+
+            // رفع الصور الجديدة
+            $validated['photos'] = $this->uploadImages($request->file('photos'), 'stadiums');
         }
-        // حالة الرفض: حذف الصور أولًا
-        $this->deleteImages($ask->photos ?? []);
 
+        // حالة الرفض → حذف الصور
+        if ($newStatus === 'rejected') {
+            $this->deleteImages($ask->photos ?? []);
+            $validated['photos'] = null;
+        }
 
+        // تحديث الطلب
         $ask->update($validated);
 
-        // حالة القبول: إنشاء ملعب بعد تحديث الطلب
+        // حالة القبول → إنشاء ملعب إذا غير موجود
         if ($newStatus === 'approved') {
             $alreadyExists = Stadium::where('name', $ask->name)
                 ->where('location', $ask->location)
@@ -115,7 +120,7 @@ class StadiumRequestController extends Controller
                     'Length' => $ask->Length,
                     'Width' => $ask->Width,
                     'owner_number' => $ask->owner_number,
-                    'price'=>$ask->price,
+                    'price' => $ask->price,
                     'deposit' => $ask->deposit,
                     'duration' => $ask->duration,
                     'latitude' => $ask->latitude,
@@ -135,7 +140,6 @@ class StadiumRequestController extends Controller
             ]
         ], 200);
     }
-
     public function deleteRequest($id)
     {
         $ask = StadiumRequest::find($id);
