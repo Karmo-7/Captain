@@ -115,6 +115,13 @@ class StadiumRequestController extends Controller
                     'Length' => $ask->Length,
                     'Width' => $ask->Width,
                     'owner_number' => $ask->owner_number,
+                    'price'=>$ask->price,
+                    'deposit' => $ask->deposit,
+                    'duration' => $ask->duration,
+                    'latitude' => $ask->latitude,
+                    'longitude' => $ask->longitude,
+                    'start_time' => $ask->start_time,
+                    'end_time' => $ask->end_time,
                 ]);
             }
         }
