@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('stadium_id');
              $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
             $table->timestamps();
-
             $table->foreign('stadium_id')->references('id')->on('stadiums')->onDelete('cascade');
         });
     }
