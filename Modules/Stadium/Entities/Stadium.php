@@ -22,6 +22,8 @@ class Stadium extends Model
 
     protected $casts = [
         'photos' => 'array',
+        'sport_id' => 'integer',
+        'owner_number' => 'integer',
     ];
 
     public function user(){

@@ -15,6 +15,9 @@ class StadiumRequest extends Model
 
     protected $casts = [
         'photos' => 'array',
+        'sport_id' => 'integer',
+        'owner_number' => 'integer',
+
     ];
     public function user(){
         return $this->belongsTo(User::class);
