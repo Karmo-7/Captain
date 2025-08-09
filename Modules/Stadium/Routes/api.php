@@ -58,9 +58,9 @@ Route::prefix('stadium')->middleware('auth:api')->group(function () {
 
 
 Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
-
+Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);
 
 //this is for testing
 
 });
-Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);
+
