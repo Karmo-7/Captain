@@ -24,6 +24,7 @@ class Stadium extends Model
         'photos' => 'array',
         'sport_id' => 'integer',
         'owner_number' => 'integer',
+        'duration' => 'integer',    
     ];
 
     public function user(){
