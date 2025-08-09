@@ -17,14 +17,16 @@ class Stadium extends Model
         return $this->hasMany(StadiumSlot::class, 'stadium_id', 'id');
     }
 
-    protected $fillable = ['user_id','sport_id','name','location','description','photos','Length','Width','owner_number','start_time','end_time','price','deposit','duration','latitude', 'longitude'];
+    protected $fillable = ['user_id','sport_id','name','location','description',
+    'photos', 'Length','Width','owner_number','start_time','end_time','price',
+    'deposit','duration','latitude', 'longitude'];
     protected $table='stadiums';
 
     protected $casts = [
         'photos' => 'array',
         'sport_id' => 'integer',
         'owner_number' => 'integer',
-        'duration' => 'integer',    
+        'duration' => 'integer',
     ];
 
     public function user(){

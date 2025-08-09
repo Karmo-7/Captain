@@ -18,6 +18,12 @@ protected $table = 'stadium_slots';
         'status',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
+
+
     public function stadium()
     {
         return $this->belongsTo(Stadium::class);

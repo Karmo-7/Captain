@@ -49,9 +49,9 @@ class StadiumSlotController extends Controller
 
             foreach ($data as $item) {
                 Validator::make($item, [
-                    'start_time' => 'required|string|max:45',
-                    'end_time' => 'required|string|max:45',
-                    'stadium_id' => 'required|integer|exists:stadiums,id',
+                        'start_time' => 'required|date_format:H:i',
+                        'end_time' => 'required|date_format:H:i|after:start_time',
+                        'stadium_id' => 'required|integer|exists:stadiums,id',
                     'status' => 'nullable|in:available,booked,maintenance',
                 ])->validate();
 
@@ -93,9 +93,9 @@ class StadiumSlotController extends Controller
         } else {
             // Single insert
             $validated = $request->validate([
-                'start_time' => 'required|string|max:45',
-                'end_time' => 'required|string|max:45',
-                'stadium_id' => 'required|integer|exists:stadiums,id',
+                    'start_time' => 'required|date_format:H:i',
+                    'end_time' => 'required|date_format:H:i|after:start_time',
+                    'stadium_id' => 'required|integer|exists:stadiums,id',
                 'status' => 'nullable|in:available,booked,maintenance',
             ]);
 
@@ -162,9 +162,9 @@ class StadiumSlotController extends Controller
 
     try {
         $validated = $request->validate([
-            'start_time' => 'sometimes|string|max:45',
-            'end_time' => 'sometimes|string|max:45',
-            'stadium_id' => 'sometimes|integer|exists:stadiums,id',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'stadium_id' => 'sometimes|integer|exists:stadiums,id',
             'status' => 'nullable|in:available,booked,maintenance',
         ]);
 
@@ -278,7 +278,7 @@ public function generateSlots($stadium_id)
             $slotStart = $startTime->format('H:i');
             $slotEnd = $startTime->copy()->addMinutes($durationInMinutes)->format('H:i');
 
-           
+
             $exists = StadiumSlot::where('stadium_id', $stadium->id)
                 ->where('start_time', $slotStart)
                 ->where('end_time', $slotEnd)
