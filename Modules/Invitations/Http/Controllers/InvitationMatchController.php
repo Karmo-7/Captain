@@ -29,7 +29,7 @@ class InvitationMatchController extends Controller
             'receiver_team_id' => 'nullable|integer',
             'stadium_id' => 'required|integer',
             'slot_id' => 'required|integer',
-             'league_id' => 'nullable|integer|exists:leagues,id',
+            'league_id' => 'nullable|integer|exists:leagues,id',
         ]);
 
         $match = InvitationMatch::create($data);

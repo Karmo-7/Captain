@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\Storage;
 
 class TeamController extends Controller
 {
-    // ✅ عرض كل الفرق
+  
     public function index()
     {
         $teams = Team::with(['captain', 'sport', 'profiles'])->get();
         return $this->successResponse($teams, 'Teams fetched successfully');
     }
 
-    // ✅ إنشاء فريق
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -35,7 +35,7 @@ class TeamController extends Controller
         return $this->errorResponse('This captain already has a team', 400);
     }
 
-    // رفع الصورة
+
     if ($request->hasFile('logo')) {
         $data['logo'] = $request->file('logo')->store('logos', 'public');
     }
@@ -45,7 +45,7 @@ class TeamController extends Controller
         return $this->successResponse($team, 'Team created successfully', 201);
     }
 
-    // ✅ عرض فريق معيّن
+
     public function show($id)
     {
         $team = Team::with(['captain', 'sport', 'profiles'])->find($id);
@@ -57,7 +57,7 @@ class TeamController extends Controller
         return $this->successResponse($team, 'Team fetched successfully');
     }
 
-    // ✅ تعديل فريق
+
     public function update(Request $request, $id)
     {
         $team = Team::find($id);
@@ -73,11 +73,11 @@ class TeamController extends Controller
              'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
        if ($request->hasFile('logo')) {
-    // حذف الصورة القديمة إذا موجودة
+
     if ($team->logo && Storage::disk('public')->exists($team->logo)) {
         Storage::disk('public')->delete($team->logo);
     }
-    // حفظ الصورة الجديدة
+
     $data['logo'] = $request->file('logo')->store('logos', 'public');
 }
 
@@ -86,7 +86,6 @@ class TeamController extends Controller
         return $this->successResponse($team->fresh(), 'Team updated successfully');
     }
 
-    // ✅ حذف فريق
     public function destroy($id)
     {
         $team = Team::find($id);
@@ -100,7 +99,7 @@ class TeamController extends Controller
         return $this->successResponse(null, 'Team deleted successfully');
     }
 
-    // ✅ دالة للرد الناجح
+
     protected function successResponse($data, $message = 'Operation successful', $code = 200)
     {
         return response()->json([
@@ -111,7 +110,7 @@ class TeamController extends Controller
         ], $code);
     }
 
-    // ✅ دالة للرد بالفشل
+
     protected function errorResponse($message = 'Something went wrong', $code = 400)
     {
         return response()->json([

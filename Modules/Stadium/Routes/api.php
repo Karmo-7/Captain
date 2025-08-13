@@ -34,6 +34,7 @@ Route::middleware(['auth:api','role:admin'])->prefix('stadium')->group(function(
     Route::post('/replyask/{id}',[StadiumRequestController::class,'ReplyAsk']);
     Route::get('/viewAllRequest',[StadiumRequestController::class,'viewall']);
 
+    
 });
 
 Route::prefix('stadium')->middleware(['auth:api', 'role:stadium_owner|admin'])->group(function () {
@@ -58,9 +59,9 @@ Route::prefix('stadium')->middleware('auth:api')->group(function () {
 
 
 Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
-Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);
+
 
 //this is for testing
 
 });
-
+Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);

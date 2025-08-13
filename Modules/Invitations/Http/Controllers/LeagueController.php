@@ -73,17 +73,31 @@ class LeagueController extends Controller
             return $this->errorResponse('League not found', 404);
         }
 
+        if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {
+        return $this->errorResponse('Unauthorized', 403);
+    }
+
         $league->update($request->all());
         return $this->successResponse($league, 'League updated successfully');
     }
 
     public function destroy($id)
     {
-        $deleted = League::destroy($id);
-        if (!$deleted) {
-            return $this->errorResponse('League not found or not deleted', 404);
-        }
+         // جلب الدوري
+    $league = League::find($id);
 
-        return $this->successResponse(null, 'League deleted successfully');
+    if (!$league) {
+        return $this->errorResponse('League not found', 404);
+    }
+
+    // التحقق من المالك أو الدور
+    if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {
+        return $this->errorResponse('Unauthorized', 403);
+    }
+
+    // تنفيذ الحذف
+    $league->delete();
+
+    return $this->successResponse(null, 'League deleted successfully');
     }
 }
