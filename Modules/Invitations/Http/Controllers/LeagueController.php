@@ -113,4 +113,42 @@ class LeagueController extends Controller
 
     return $this->successResponse(null, 'League deleted successfully');
     }
+
+
+
+public function myLeagues(Request $request)
+{
+    // بناء الكويري حسب المستخدم الحالي
+    $query = League::where('created_by', auth()->id());
+
+    // فلترة اختيارية حسب الحالة
+    if ($request->has('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $leagues = $query->get();
+
+    if ($leagues->isEmpty()) {
+        return $this->errorResponse('No leagues found for the current user', 404);
+    }
+
+    return $this->successResponse($leagues, 'Your leagues retrieved successfully');
+}
+
+
+
+public function leaguesByStadium(Request $request, $stadium_id)
+{
+    // جلب الدوريات الخاصة بالملعب المحدد
+    $leagues = League::where('stadium_id', $stadium_id)->get();
+
+    if ($leagues->isEmpty()) {
+        return $this->errorResponse('No leagues found for this stadium', 404);
+    }
+
+    return $this->successResponse($leagues, 'Leagues for the stadium retrieved successfully');
+}
+
+
+
 }
