@@ -45,7 +45,13 @@ class LeagueController extends Controller
                 'price' => 'required|numeric',
                 'prize' => 'required|string',
                 'status' => 'required|in:pending,active,finished',
+                'stadium_id' => 'required|exists:stadiums,id',
             ]);
+
+            $stadium = \Modules\Stadium\Entities\Stadium::find($data['stadium_id']);
+            if ($stadium->user_id !== auth()->id()) {
+             return $this->errorResponse('You do not own this stadium', 403);
+}
 
             $data['created_by'] = auth()->id();
             $league = League::create($data);
@@ -73,6 +79,10 @@ class LeagueController extends Controller
             return $this->errorResponse('League not found', 404);
         }
 
+        if ($league->stadium->user_id !== auth()->id()) {
+    return $this->errorResponse('You do not own this stadium', 403);
+}
+
         if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {
         return $this->errorResponse('Unauthorized', 403);
     }
@@ -89,6 +99,9 @@ class LeagueController extends Controller
     if (!$league) {
         return $this->errorResponse('League not found', 404);
     }
+    if ($league->stadium->user_id !== auth()->id()) {
+    return $this->errorResponse('You do not own this stadium', 403);
+}
 
     // التحقق من المالك أو الدور
     if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {

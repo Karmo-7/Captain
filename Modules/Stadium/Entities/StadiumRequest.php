@@ -30,6 +30,11 @@ class StadiumRequest extends Model
         return $this->belongsTo(Sport::class);
     }
 
+    public function leagues()
+{
+    return $this->hasMany(\Modules\Invitations\Entities\League::class, 'stadium_id');
+}
+
 
 
     protected static function newFactory()

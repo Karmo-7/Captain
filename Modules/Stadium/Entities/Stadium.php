@@ -46,5 +46,9 @@ class Stadium extends Model
       //  return \Modules\Stadium\Database\factories\StadiumFactory::new();
     }
 
+public function leagues()
+{
+    return $this->hasMany(\Modules\Invitations\Entities\League::class, 'stadium_id');
+}
 
 }

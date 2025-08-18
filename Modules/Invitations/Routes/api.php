@@ -17,6 +17,8 @@ use Modules\Invitations\Http\Controllers\UserMatchController;
 
 Route::middleware('auth:api')->group(function () {
 
+
+      Route::get('/invitation-matches/league/{leagueId}', [InvitationMatchController::class, 'getByLeague']);
     // ✅ Routes خاصة بالـ Leagues
    // Route::apiResource('leagues', LeagueController::class);
     //Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
@@ -69,6 +71,9 @@ Route::prefix('leagues')->middleware(['auth:api', 'role:stadium_owner'])->group(
   // Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
 Route::put('/{id}', [LeagueController::class, 'update']);
     Route::delete('/{id}', [LeagueController::class, 'destroy']); // حذف ليج
+
+    Route::post('/whith-match', [InvitationMatchController::class, 'storeWithLeagueCheck']);
+
 });
 
 
