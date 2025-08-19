@@ -16,6 +16,7 @@ class League extends Model
         'prize',
         'status',
         'created_by',
+        'stadium_id',
     ];
 
 
@@ -34,4 +35,14 @@ class League extends Model
     {
         //return \Modules\Invitations\Database\factories\LeagueFactory::new();
     }
+
+    public function stadium()
+{
+    return $this->belongsTo(\Modules\Stadium\Entities\Stadium::class, 'stadium_id');
+}
+
+ public function stadiumRequest()
+{
+    return $this->belongsTo(\Modules\Stadium\Entities\StadiumRequest::class, 'stadium_id');
+}
 }

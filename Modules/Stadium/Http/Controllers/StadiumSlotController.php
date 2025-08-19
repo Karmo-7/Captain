@@ -262,22 +262,18 @@ public function generateSlots($stadium_id)
         $startTime = \Carbon\Carbon::parse($stadium->start_time);
         $endTime = \Carbon\Carbon::parse($stadium->end_time);
 
+        // ✅ المدة مباشرة بالدقائق
+        $durationInMinutes = (int) $stadium->duration;
 
-        $durationParts = explode(':', $stadium->duration);
-        if (count($durationParts) !== 2) {
-            return $this->errorResponse("المدة (duration) غير صالحة. يجب أن تكون بصيغة HH:MM", 422);
+        if ($durationInMinutes <= 0) {
+            return $this->errorResponse("المدة (duration) يجب أن تكون أكبر من 0 دقيقة", 422);
         }
-
-        $hours = (int) $durationParts[0];
-        $minutes = (int) $durationParts[1];
-        $durationInMinutes = $hours * 60 + $minutes;
 
         $slots = [];
 
         while ($startTime->copy()->addMinutes($durationInMinutes)->lte($endTime)) {
             $slotStart = $startTime->format('H:i');
             $slotEnd = $startTime->copy()->addMinutes($durationInMinutes)->format('H:i');
-
 
             $exists = StadiumSlot::where('stadium_id', $stadium->id)
                 ->where('start_time', $slotStart)
@@ -305,6 +301,7 @@ public function generateSlots($stadium_id)
         return $this->errorResponse("حدث خطأ أثناء إنشاء الأوقات", 500, $e->getMessage());
     }
 }
+
 
 
 }

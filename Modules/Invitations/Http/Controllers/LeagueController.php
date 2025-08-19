@@ -45,7 +45,13 @@ class LeagueController extends Controller
                 'price' => 'required|numeric',
                 'prize' => 'required|string',
                 'status' => 'required|in:pending,active,finished',
+                'stadium_id' => 'required|exists:stadiums,id',
             ]);
+
+            $stadium = \Modules\Stadium\Entities\Stadium::find($data['stadium_id']);
+            if ($stadium->user_id !== auth()->id()) {
+             return $this->errorResponse('You do not own this stadium', 403);
+}
 
             $data['created_by'] = auth()->id();
             $league = League::create($data);
@@ -73,17 +79,76 @@ class LeagueController extends Controller
             return $this->errorResponse('League not found', 404);
         }
 
+        if ($league->stadium->user_id !== auth()->id()) {
+    return $this->errorResponse('You do not own this stadium', 403);
+}
+
+        if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {
+        return $this->errorResponse('Unauthorized', 403);
+    }
+
         $league->update($request->all());
         return $this->successResponse($league, 'League updated successfully');
     }
 
     public function destroy($id)
     {
-        $deleted = League::destroy($id);
-        if (!$deleted) {
-            return $this->errorResponse('League not found or not deleted', 404);
-        }
+         // جلب الدوري
+    $league = League::find($id);
 
-        return $this->successResponse(null, 'League deleted successfully');
+    if (!$league) {
+        return $this->errorResponse('League not found', 404);
     }
+    if ($league->stadium->user_id !== auth()->id()) {
+    return $this->errorResponse('You do not own this stadium', 403);
+}
+
+    // التحقق من المالك أو الدور
+    if ($league->created_by !== auth()->id() && !auth()->user()->hasRole('stadium_owner')) {
+        return $this->errorResponse('Unauthorized', 403);
+    }
+
+    // تنفيذ الحذف
+    $league->delete();
+
+    return $this->successResponse(null, 'League deleted successfully');
+    }
+
+
+
+public function myLeagues(Request $request)
+{
+    // بناء الكويري حسب المستخدم الحالي
+    $query = League::where('created_by', auth()->id());
+
+    // فلترة اختيارية حسب الحالة
+    if ($request->has('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $leagues = $query->get();
+
+    if ($leagues->isEmpty()) {
+        return $this->errorResponse('No leagues found for the current user', 404);
+    }
+
+    return $this->successResponse($leagues, 'Your leagues retrieved successfully');
+}
+
+
+
+public function leaguesByStadium(Request $request, $stadium_id)
+{
+    // جلب الدوريات الخاصة بالملعب المحدد
+    $leagues = League::where('stadium_id', $stadium_id)->get();
+
+    if ($leagues->isEmpty()) {
+        return $this->errorResponse('No leagues found for this stadium', 404);
+    }
+
+    return $this->successResponse($leagues, 'Leagues for the stadium retrieved successfully');
+}
+
+
+
 }

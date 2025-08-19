@@ -17,9 +17,18 @@ use Modules\Invitations\Http\Controllers\UserMatchController;
 
 Route::middleware('auth:api')->group(function () {
 
+Route::get('leagues/my', [LeagueController::class, 'myLeagues']);
+Route::get('leagues/stadium/{stadium_id}', [LeagueController::class, 'leaguesByStadium']);
+
+Route::post('invitations/{id}/approve', [TeamUsesrinvController::class, 'approveInvitation']);
+Route::post('invitations/{id}/reject', [TeamUsesrinvController::class, 'rejectInvitation']);
+
+
+
+      Route::get('/invitation-matches/league/{leagueId}', [InvitationMatchController::class, 'getByLeague']);
     // ✅ Routes خاصة بالـ Leagues
-    Route::apiResource('leagues', LeagueController::class);
-    Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
+   // Route::apiResource('leagues', LeagueController::class);
+    //Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
 
     // ✅ Routes خاصة بالـ team_ownerinv
     Route::apiResource('team-ownerinv', TeamOwnerinvController::class);
@@ -55,4 +64,24 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('user-matches', UserMatchController::class);
     Route::apiResource('invitation-matches', InvitationMatchController::class);
     Route::apiResource('match-results', MatchResultController::class);
+
+// باقي العمليات العامة
+Route::get('leagues', [LeagueController::class, 'index']);
+Route::get('leagues/{id}', [LeagueController::class, 'show']);
+
+
 });
+
+
+Route::prefix('leagues')->middleware(['auth:api', 'role:stadium_owner'])->group(function () {
+    Route::post('/', [LeagueController::class, 'store']);     // إنشاء ليج
+  // Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
+Route::put('/{id}', [LeagueController::class, 'update']);
+    Route::delete('/{id}', [LeagueController::class, 'destroy']); // حذف ليج
+
+    Route::post('/whith-match', [InvitationMatchController::class, 'storeWithLeagueCheck']);
+
+
+});
+
+

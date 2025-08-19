@@ -2,6 +2,7 @@
 
 namespace Modules\Invitations\Http\Controllers;
 
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Invitations\Entities\Team_Usesrinv;
@@ -119,5 +120,65 @@ class TeamUsesrinvController extends Controller
     {
         $data = Team_Usesrinv::receivedByTeam($teamId)->get();
         return $this->successResponse($data, 'Invitations received by team retrieved successfully');
+    }
+
+
+    // ✅ الموافقة على الدعوة
+    public function approveInvitation(Request $request, $id)
+    {
+        $invitation = Team_Usesrinv::find($id);
+
+        if (!$invitation) {
+            return $this->errorResponse('Invitation not found', 404);
+        }
+
+        if ($invitation->status === 'accepted') {
+            return $this->errorResponse('Invitation already accepted', 400);
+        }
+
+        // ✅ تحديث حالة الدعوة
+        $invitation->update(['status' => 'accepted']);
+
+        // 🟢 إذا كان الفريق هو المرسل والدعوة لمستخدم
+        if ($invitation->is_team && $invitation->receiver_id) {
+            $profile = Profile::where('user_id', $invitation->receiver_id)->first();
+
+            if (!$profile) {
+                return $this->errorResponse('Profile not found for the invited user', 404);
+            }
+
+            $profile->update(['team_id' => $invitation->team_id]);
+        }
+
+        // 🟢 إذا كان المستخدم هو المرسل والدعوة لفريق (الفريق يقبل المستخدم)
+        if (!$invitation->is_team && $invitation->receiver_id) {
+            $profile = Profile::where('user_id', $invitation->receiver_id)->first();
+
+            if (!$profile) {
+                return $this->errorResponse('Profile not found for the invited user', 404);
+            }
+
+            $profile->update(['team_id' => $invitation->team_id]);
+        }
+
+        return $this->successResponse($invitation, 'Invitation approved and user linked to team successfully');
+    }
+
+
+     public function rejectInvitation($id)
+    {
+        $invitation = Team_Usesrinv::find($id);
+
+        if (!$invitation) {
+            return $this->errorResponse('Invitation not found', 404);
+        }
+
+        if ($invitation->status === 'declined') {
+            return $this->errorResponse('Invitation already declined', 400);
+        }
+
+        $invitation->update(['status' => 'declined']);
+
+        return $this->successResponse($invitation, 'Invitation rejected successfully');
     }
 }

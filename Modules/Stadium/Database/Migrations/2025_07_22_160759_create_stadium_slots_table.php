@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('stadium_slots', function (Blueprint $table) {
             $table->id();
-            $table->string('start_time', 45);
-            $table->string('end_time', 45);
+           $table->time('start_time');
+            $table->time('end_time');
             $table->unsignedBigInteger('stadium_id');
              $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
             $table->timestamps();
