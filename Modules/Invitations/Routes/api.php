@@ -17,6 +17,8 @@ use Modules\Invitations\Http\Controllers\UserMatchController;
 
 Route::middleware('auth:api')->group(function () {
 
+    Route::get('leagues/{leagueId}/teams', [InvitationMatchController::class, 'teamsByLeague']);
+
 Route::get('leagues/my', [LeagueController::class, 'myLeagues']);
 Route::get('leagues/stadium/{stadium_id}', [LeagueController::class, 'leaguesByStadium']);
 
@@ -69,7 +71,12 @@ Route::post('invitations/{id}/reject', [TeamUsesrinvController::class, 'rejectIn
 Route::get('leagues', [LeagueController::class, 'index']);
 Route::get('leagues/{id}', [LeagueController::class, 'show']);
 
-
+// Invitation Matches Actions
+Route::prefix('invitation-matches')->group(function () {
+    Route::post('{id}/approve', [InvitationMatchController::class, 'approve']);
+    Route::post('{id}/reject', [InvitationMatchController::class, 'reject']);
+    Route::post('{id}/mark-as-played', [InvitationMatchController::class, 'markAsPlayed']);
+});
 });
 
 
@@ -80,6 +87,8 @@ Route::put('/{id}', [LeagueController::class, 'update']);
     Route::delete('/{id}', [LeagueController::class, 'destroy']); // حذف ليج
 
     Route::post('/whith-match', [InvitationMatchController::class, 'storeWithLeagueCheck']);
+Route::patch('owner-invitations/{id}/approve', [TeamOwnerinvController::class, 'approveInvitation']);
+Route::patch('owner-invitations/{id}/reject', [TeamOwnerinvController::class, 'rejectInvitation']);
 
 
 });

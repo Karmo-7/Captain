@@ -29,17 +29,49 @@ class LeagueController extends Controller
         ], $code);
     }
 
-    public function index()
-    {
-        $data = League::all();
-        return $this->successResponse($data, 'All leagues retrieved successfully');
-    }
+    // public function index()
+    // {
+    //     $data = League::all();
+    //     return $this->successResponse($data, 'All leagues retrieved successfully');
+    // }
+public function index()
+{
+    // جلب الدوريات مع الملعب والرياضة (فقط الاسم)
+    $data = League::with([
+        'stadium.sport' => function ($query) {
+            $query->select('id', 'name'); // بس ID + الاسم
+        }
+    ])->get();
+
+    // تجهيز النتيجة
+    $data = $data->map(function ($league) {
+        return [
+            'id' => $league->id,
+            'name' => $league->name,
+            'description' => $league->description,
+            'start_date' => $league->start_date,
+            'end_date' => $league->end_date,
+            'price' => $league->price,
+            'prize' => $league->prize,
+            'status' => $league->status,
+            'created_by' => $league->created_by,
+            'stadium' => $league->stadium, // كل بيانات الملعب
+            'sport_name' => optional($league->stadium->sport)->name, // فقط الاسم
+        ];
+    });
+
+    return $this->successResponse($data, 'All leagues retrieved successfully');
+}
+
+
+
 
     public function store(Request $request)
     {
         try {
             $data = $request->validate([
                 'name' => 'required|string',
+                'description' => 'nullable|string',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
                 'price' => 'required|numeric',
@@ -63,14 +95,18 @@ class LeagueController extends Controller
     }
 
     public function show($id)
-    {
-        $league = League::find($id);
-        if (!$league) {
-            return $this->errorResponse('League not found', 404);
-        }
+{
+    $league = League::with(['stadium.sport' => function ($q) {
+        $q->select('id', 'name');
+    }])->find($id);
 
-        return $this->successResponse($league, 'League retrieved successfully');
+    if (!$league) {
+        return $this->errorResponse('League not found', 404);
     }
+
+    return $this->successResponse($league, 'League retrieved successfully');
+}
+
 
     public function update(Request $request, $id)
     {
@@ -139,15 +175,18 @@ public function myLeagues(Request $request)
 
 public function leaguesByStadium(Request $request, $stadium_id)
 {
-    // جلب الدوريات الخاصة بالملعب المحدد
-    $leagues = League::where('stadium_id', $stadium_id)->get();
+    // جلب الدوريات الخاصة بالملعب المحدد وحالته approved
+    $leagues = League::where('stadium_id', $stadium_id)
+                     ->where('status', 'approved')
+                     ->get();
 
     if ($leagues->isEmpty()) {
-        return $this->errorResponse('No leagues found for this stadium', 404);
+        return $this->errorResponse('No approved leagues found for this stadium', 404);
     }
 
-    return $this->successResponse($leagues, 'Leagues for the stadium retrieved successfully');
+    return $this->successResponse($leagues, 'Approved leagues for the stadium retrieved successfully');
 }
+
 
 
 

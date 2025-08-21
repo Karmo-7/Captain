@@ -10,6 +10,7 @@ class League extends Model
     use HasFactory;
  protected $fillable = [
         'name',
+        'description',
         'start_date',
         'end_date',
         'price',
