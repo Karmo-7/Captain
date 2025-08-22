@@ -20,8 +20,9 @@ class Team extends Model
     }
 public function profiles()
 {
-    return $this->hasMany(Profile::class, 'team_id', 'team_id');
+    return $this->hasMany(Profile::class, 'team_id', 'id');
 }
+
 
 public function captain()
 {
