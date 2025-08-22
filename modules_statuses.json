@@ -5,5 +5,7 @@
     "Invitations": true,
     "Ads": true,
     "Facilities": true,
-    "Book": true
+    "Book": true,
+    "Rating": true,
+    "Reports": true
 }

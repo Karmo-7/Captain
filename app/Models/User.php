@@ -99,5 +99,32 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 
+public function stadiumRatings()
+{
+    return $this->hasMany(\Modules\Rating\Entities\stadiumRating::class);
+}
 
+public function facilityRatings()
+{
+    return $this->hasMany(\Modules\Rating\Entities\FacilityRating::class);
+}
+
+
+ // Reports created by stadium_owner
+    public function reportsCreated()
+    {
+        return $this->hasMany(\Modules\Reports\Entities\Report::class, 'stadium_owner_id');
+    }
+
+    // Reports where this user is reported (player)
+    public function reportsReceived()
+    {
+        return $this->hasMany(\Modules\Reports\Entities\Report::class, 'player_id');
+    }
+
+    // Reports handled by admin
+    public function reportsHandled()
+    {
+        return $this->hasMany(\Modules\Reports\Entities\Report::class, 'admin_id');
+    }
 }

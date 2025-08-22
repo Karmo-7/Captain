@@ -51,4 +51,12 @@ public function leagues()
     return $this->hasMany(\Modules\Invitations\Entities\League::class, 'stadium_id');
 }
 
+public function averageRating()
+{
+    return $this->ratings()->avg('rating');
+}
+  public function ratings()
+    {
+        return $this->hasMany(\Modules\Rating\Entities\StadiumRating::class, 'stadium_id');
+    }
 }

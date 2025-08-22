@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Modules\Facilities\Http\Controllers\FacilityController;
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | API Routes
