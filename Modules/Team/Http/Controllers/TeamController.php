@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TeamController extends Controller
 {
-  
+
     public function index()
     {
         $teams = Team::with(['captain', 'sport', 'profiles'])->get();
@@ -19,31 +19,37 @@ class TeamController extends Controller
 
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'captin_id' => 'required|exists:users,id',
-            'sport_id' => 'required|exists:sports,id',
-             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
-       $existingTeam = Team::where('captin_id', $data['captin_id'])->first();
-       if ($existingTeam) {
-        return $this->errorResponse('This captain already has a team', 400);
-    }
+{
+    $data = $request->validate([
+        'name' => 'required|string|max:255',
+        'captin_id' => 'required|exists:users,id',
+        'sport_id' => 'required|exists:sports,id',
+        'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+    ]);
+
+    // التحقق أن الكابتن ما عنده فريق
     $existingTeam = Team::where('captin_id', $data['captin_id'])->first();
     if ($existingTeam) {
         return $this->errorResponse('This captain already has a team', 400);
     }
 
-
+    // حفظ صورة الشعار إذا وجدت
     if ($request->hasFile('logo')) {
         $data['logo'] = $request->file('logo')->store('logos', 'public');
     }
 
-        $team = Team::create($data);
+    // إنشاء الفريق
+    $team = Team::create($data);
 
-        return $this->successResponse($team, 'Team created successfully', 201);
+    // تحديث البروفايل وربط الكابتن بالفريق
+    $profile = \App\Models\Profile::where('user_id', $data['captin_id'])->first();
+    if ($profile) {
+        $profile->update(['team_id' => $team->id]);
     }
+
+    return $this->successResponse($team, 'Team created successfully', 201);
+}
+
 
 
     public function show($id)
