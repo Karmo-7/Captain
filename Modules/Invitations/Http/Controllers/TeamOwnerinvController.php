@@ -2,6 +2,7 @@
 
 namespace Modules\Invitations\Http\Controllers;
 
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Invitations\Entities\Team_Ownerinv;
@@ -129,4 +130,53 @@ class TeamOwnerinvController extends Controller
         $data = Team_Ownerinv::receivedByTeam($teamId)->get();
         return $this->successResponse($data, 'Invitations received by team retrieved successfully');
     }
+
+      // ✅ Approve owner invitation
+    public function approveInvitation(Request $request, $id)
+    {
+        $invitation = Team_Ownerinv::find($id);
+
+        if (!$invitation) {
+            return $this->errorResponse('Invitation not found', 404);
+        }
+
+        if ($invitation->status === 'accepted') {
+            return $this->errorResponse('Invitation already accepted', 400);
+        }
+
+        $invitation->update(['status' => 'accepted']);
+
+        // If the invitation is sent to a team owner and accepted
+        if ($invitation->is_team && $invitation->owner_id) {
+            $profile = Profile::where('user_id', $invitation->owner_id)->first();
+            if (!$profile) {
+                return $this->errorResponse('Profile not found for the invited owner', 404);
+            }
+
+            // Link owner to the team
+            $profile->update(['team_id' => $invitation->team_id]);
+        }
+
+        return $this->successResponse($invitation, 'Owner invitation approved and linked successfully');
+    }
+
+    // ✅ Reject owner invitation
+    public function rejectInvitation($id)
+    {
+        $invitation = Team_Ownerinv::find($id);
+
+        if (!$invitation) {
+            return $this->errorResponse('Invitation not found', 404);
+        }
+
+        if ($invitation->status === 'declined') {
+            return $this->errorResponse('Invitation already declined', 400);
+        }
+
+        $invitation->update(['status' => 'declined']);
+
+        return $this->successResponse($invitation, 'Owner invitation rejected successfully');
+    }
+
+
 }

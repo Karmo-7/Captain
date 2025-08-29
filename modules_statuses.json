@@ -9,4 +9,6 @@
     "Controller": true,
     "Paymentcontroller": true,
     "PaymentController": true
+    "Rating": true,
+    "Reports": true
 }

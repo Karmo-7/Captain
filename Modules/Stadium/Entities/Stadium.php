@@ -68,4 +68,12 @@ class Stadium extends Model
 
 
 
+public function averageRating()
+{
+    return $this->ratings()->avg('rating');
+}
+  public function ratings()
+    {
+        return $this->hasMany(\Modules\Rating\Entities\StadiumRating::class, 'stadium_id');
+    }
 }

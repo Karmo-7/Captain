@@ -19,10 +19,20 @@ class Facility extends Model
     protected $casts = [
         'photos' => 'array',
     ];
-    
 
+public function averageRating()
+{
+    return $this->ratings()->avg('rating');
+
+
+}
+ public function ratings()
+    {
+        return $this->hasMany(\Modules\Rating\Entities\FacilityRating::class, 'facility_id');
+    }
     protected static function newFactory()
     {
-        return \Modules\Facilities\Database\factories\FacilityFactory::new();
+       // return \Modules\Facilities\Database\factories\FacilityFactory::new();
     }
+
 }
