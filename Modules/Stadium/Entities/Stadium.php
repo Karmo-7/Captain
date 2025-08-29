@@ -5,6 +5,8 @@ namespace Modules\Stadium\Entities;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Book\Entities\Book;
+use Modules\Book\Entities\StadiumSlotBooking;
 use Modules\Facilities\Entities\Facility;
 use Modules\Sport\Entities\Sport;
 
@@ -27,6 +29,10 @@ class Stadium extends Model
         'sport_id' => 'integer',
         'owner_number' => 'integer',
         'duration' => 'integer',
+        'price' => 'float',
+        'deposit' => 'float',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function user(){
@@ -46,9 +52,20 @@ class Stadium extends Model
       //  return \Modules\Stadium\Database\factories\StadiumFactory::new();
     }
 
-public function leagues()
-{
-    return $this->hasMany(\Modules\Invitations\Entities\League::class, 'stadium_id');
-}
+
+    public function leagues()
+
+    {
+        return $this->hasMany(\Modules\Invitations\Entities\League::class, 'stadium_id');
+    }
+
+
+    public function bookings()
+    {
+        return $this->hasMany(StadiumSlotBooking::class);
+    }
+
+
+
 
 }

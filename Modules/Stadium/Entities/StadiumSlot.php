@@ -4,6 +4,8 @@ namespace Modules\Stadium\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Book\Entities\Book;
+use Modules\Book\Entities\StadiumSlotBooking;
 
 class StadiumSlot extends Model
 {
@@ -28,6 +30,13 @@ protected $table = 'stadium_slots';
     {
         return $this->belongsTo(Stadium::class);
     }
+
+
+    public function bookings()
+    {
+        return $this->hasMany(StadiumSlotBooking::class, 'stadium_slot_id');
+    }
+
     protected static function newFactory()
     {
        // return \Modules\Stadium\Database\factories\StadiumSlotFactory::new();

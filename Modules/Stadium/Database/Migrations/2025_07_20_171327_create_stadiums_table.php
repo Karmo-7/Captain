@@ -26,7 +26,6 @@ return new class extends Migration
             $table->bigInteger('owner_number');
             $table->time('start_time');
             $table->time('end_time');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->decimal('price', 8, 2);
             $table->decimal('deposit', 8, 2);
             $table->string('duration');

@@ -23,7 +23,15 @@ class CustomResetPassword extends Notification
 
     public function toMail($notifiable)
     {
-        $link = url("/reset-password-redirect?token={$this->token}&email={$this->email}");
+        // الشرط فقط للـ admin
+        if ($notifiable->role === 'admin') {
+            // رابط خاص بالادمن جاي من .env
+            $frontendUrl = env('ADMIN_FRONTEND_URL', 'http://localhost:3000');
+            $link = "{$frontendUrl}/reset-password?token={$this->token}&email={$this->email}";
+        } else {
+
+            $link = url("/reset-password-redirect?token={$this->token}&email={$this->email}");
+        }
 
         return (new MailMessage)
             ->subject('Reset Your Password')

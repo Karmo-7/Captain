@@ -22,23 +22,21 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'string|max:255',
-            'last_name' => 'string|max:255',
-            'birthdate' => 'date',
-            'address' => 'string',
-            'Sport' => 'string',
-            'phone_number' => 'unique:profiles|numeric|digits_between:7,15',
-            'gender' => 'in:male,female',
-            'height' => 'integer|min:0',
-            'weight' => 'integer|min:0',
-            'positions_played' => 'string',
-            'avatar' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-            'years_of_experience' => 'integer|min:0',
-            'notable_achievements' => 'string',
-            'previous_teams' => 'string',
-
-
-
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date',
+            'address' => 'nullable|string',
+            'Sport' => 'nullable|string',
+            'phone_number' => 'nullable|numeric|digits_between:7,15|unique:profiles,phone_number,' . $this->id,
+            'gender' => 'nullable|in:male,female',
+            'height' => 'nullable|integer|min:0',
+            'weight' => 'nullable|integer|min:0',
+            'positions_played' => 'nullable|string',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'years_of_experience' => 'nullable|integer|min:0',
+            'notable_achievements' => 'nullable|string',
+            'previous_teams' => 'nullable|string',
         ];
     }
+
 }

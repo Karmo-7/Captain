@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('books', function (Blueprint $table) {
-            $table->id();
-            
-
-            $table->timestamps();
+        Schema::table('payments', function (Blueprint $table) {
+            $table->timestamp('expires_at')->nullable()->after('transaction_id');
         });
     }
 
@@ -28,6 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('books');
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('expires_at');
+        });
     }
 };
+    

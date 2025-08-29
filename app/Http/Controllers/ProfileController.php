@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -66,7 +67,8 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        $validated = $request->validated();
+
+        $validated=$request->validated();
 
         if ($request->hasFile('avatar')) {
             if ($profile->avatar && Storage::disk('public')->exists($profile->avatar)) {

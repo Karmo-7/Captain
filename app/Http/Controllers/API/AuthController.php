@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use Stripe\Stripe;
+use Stripe\Account;
+use Stripe\AccountLink;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -19,6 +21,8 @@ use App\Notifications\CustomResetPassword;
 
 class AuthController extends Controller
 {
+
+
     public function register(Request $request)
     {
         try {
@@ -41,32 +45,62 @@ class AuthController extends Controller
             $user->assignRole($request->role);
             $user->sendEmailVerificationNotification();
 
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $onboardingUrl = null;
+
+            if ($request->role === 'stadium_owner') {
+                // إنشاء حساب لصاحب الملعب
+                $account = Account::create([
+                    'type' => 'express',
+                    'country' => 'US',
+                    'email' => $user->email,
+                    'capabilities' => [
+                        'card_payments' => ['requested' => true],
+                        'transfers' => ['requested' => true],
+                    ],
+                ]);
+
+                $user->update(['stripe_account_id' => $account->id]);
+
+                $onboardingLink = AccountLink::create([
+                    'account' => $account->id,
+                    'refresh_url' => env('NGROK_URL') . '/stripe/onboarding/refresh?account=' . $account->id,
+                    'return_url' => env('NGROK_URL') . '/stripe/onboarding/return?account=' . $account->id,
+                    'type' => 'account_onboarding',
+                ]);
+
+                $onboardingUrl = $onboardingLink->url;
+            }
+
+            if ($request->role === 'player') {
+                // إنشاء Customer للاعب
+                $customer = \Stripe\Customer::create([
+                    'email' => $user->email,
+
+                ]);
+
+                $user->update(['stripe_customer_id' => $customer->id]);
+            }
+
             return response()->json([
                 'status' => true,
-                'status_code' => 201,
                 'message' => 'User registered. Please verify your email.',
                 'data' => [
-                    'role' => $request->role
+                    'role' => $request->role,
+                    'onboarding_url' => $onboardingUrl
                 ]
             ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 422,
-                'message' => 'Validation error.',
-                'errors' => $e->errors()
-            ], 422);
 
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'status_code' => 500,
-                'message' => 'Something went wrong.',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
+
 
     public function login(Request $request)
     {
@@ -255,6 +289,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'id_token' => 'required|string',
+            'role' => 'nullable|in:player,stadium_owner'
         ]);
 
         try {
@@ -285,7 +320,15 @@ class AuthController extends Controller
             }
 
             if (!$user->hasAnyRole([ 'player', 'stadium_owner'])) {
-                $user->assignRole('player');
+                if($request->filled('role')){
+                    $user->assignRole($request->role);
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 403,
+                        'message' => 'Role is required for new Google users'
+                    ], 403);
+                }
             }
 
             $token = $user->createToken('google-mobile-token')->accessToken;

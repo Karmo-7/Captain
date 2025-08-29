@@ -33,8 +33,10 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware(['auth:api','role:admin'])->prefix('stadium')->group(function(){
     Route::post('/replyask/{id}',[StadiumRequestController::class,'ReplyAsk']);
     Route::get('/viewAllRequest',[StadiumRequestController::class,'viewall']);
+    Route::get('/get_all_owners', [StadiumController::class, 'get_all_owmer']);
 
-    
+
+
 });
 
 Route::prefix('stadium')->middleware(['auth:api', 'role:stadium_owner|admin'])->group(function () {
@@ -58,10 +60,13 @@ Route::prefix('stadium')->middleware('auth:api')->group(function () {
     Route::get('/view/{id}', [StadiumController::class, 'view']);
 
 
-Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
+// Route::get('/stadium/viewRequest/{id}', [StadiumRequestController::class, 'view'])->middleware('auth:api');
 
 
-//this is for testing
+    Route::get('/nearby', [StadiumController::class,'nearstadium']);
+    Route::get('/filter', [StadiumController::class, 'filter']);
+
+    //this is for testing
 
 });
 Route::post('stadium-slots/generate/{stadium_id}', [StadiumSlotController::class, 'generateSlots']);

@@ -11,6 +11,7 @@ class StadiumRequestUpdate extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         return [
@@ -26,7 +27,16 @@ class StadiumRequestUpdate extends FormRequest
             'start_time' => 'date_format:H:i',
             'end_time' => 'date_format:H:i|after:start_time',
             'price' => 'numeric|min:0',
-            'deposit' => 'numeric|min:0',
+            'deposit' => [
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) {
+                    if ($this->price !== null && floatval($value) >= floatval($this->price)) {
+                        $fail('The deposit must be less than the price.');
+                    }
+                },
+            ],
+
             'duration' => 'integer|min:1',
             'latitude' => 'numeric|between:-90,90',
             'longitude' => 'numeric|between:-180,180',

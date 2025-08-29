@@ -9,14 +9,16 @@ return new class extends Migration {
     {
         Schema::create('stadium_slots', function (Blueprint $table) {
             $table->id();
-           $table->time('start_time');
+            $table->time('start_time');
             $table->time('end_time');
             $table->unsignedBigInteger('stadium_id');
-             $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
+            $table->enum('status', ['available', 'maintenance'])->default('available');
             $table->timestamps();
+
             $table->foreign('stadium_id')->references('id')->on('stadiums')->onDelete('cascade');
         });
     }
+
 
     public function down(): void
     {

@@ -20,7 +20,10 @@ class StadiumRequest extends Model
         'sport_id' => 'integer',
         'owner_number' => 'integer',
         'duration' => 'integer',
-
+        'price' => 'float',
+        'deposit' => 'float',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
     public function user(){
         return $this->belongsTo(User::class);

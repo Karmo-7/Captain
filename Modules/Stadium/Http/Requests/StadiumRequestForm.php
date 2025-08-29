@@ -26,7 +26,7 @@ class StadiumRequestForm extends FormRequest
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'price' => 'required|numeric|min:0',
-            'deposit' => 'required|numeric|min:0',
+            'deposit' => 'required|numeric|min:0|lt:price',
             'duration' => 'required|integer|min:1',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',

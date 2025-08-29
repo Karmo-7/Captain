@@ -2,10 +2,14 @@
 
 namespace Modules\Stadium\Http\Controllers;
 
+use App\Models\User;
+use Google\Service\Analytics\FilterRef;
+use Google\Service\Directory\Role;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Stadium\Entities\Stadium;
+use Modules\Stadium\Http\Requests\filterRequest;
 use Modules\Stadium\Http\Requests\StadiumRequestUpdate;
 use App\Traits\ImageDeletable;
 
@@ -100,6 +104,88 @@ class StadiumController extends Controller
             'status' => true,
             'status_code' => 200,
             'message' => 'Stadium deleted successfully',
+        ]);
+    }
+
+    public function get_all_owmer(){
+        $owners = User::role('stadium_owner')
+            ->with('stadiums')
+            ->get();
+        return $owners;
+    }
+
+    public function nearstadium(Request $request)
+    {
+
+        $userLat = $request->input('latitude');
+        $userLng = $request->input('longitude');
+        $radius = $request->input('radius');
+        if(!$userLat||!$userLng){
+            return response()->json([
+            'status'=>false,
+            'message' => 'Latitude and Longitude are required'
+            ],400);
+        }
+        $query = Stadium::select('*')
+            ->selectRaw("
+            (6371 * acos(
+                cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) +
+                sin(radians(?)) * sin(radians(latitude))
+            )) AS distance
+        ", [$userLat, $userLng, $userLat])
+            ->orderBy('distance', 'asc');
+        if (!empty($radius) && $radius > 0) {
+            $query->having('distance', '<=', $radius);
+        }
+        $stadiums = $query->get();
+        if ($stadiums->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'You do not have Stadiums in your border.'
+            ], 404);
+        }
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Stadiums retrieved successfully',
+            'data' => $stadiums
+        ]);
+    }
+
+
+    public function filter(filterRequest $request){
+        $validate=$request->validated();
+        $sportId=$validate['sport_id']??null;
+        $minprice=$validate['min_price']??null;
+        $maxprice=$validate['max_price']??null;
+        $query=Stadium::query()->with('sport');
+        if(!empty($sportId)){
+            $query->where('sport_id',$sportId);
+        }
+        if(!empty($minprice)&&!empty($maxprice)){
+            $query->whereBetween('price', [$minprice, $maxprice]);
+        }
+        elseif(!empty($minprice)){
+            $query->where('price','>=',$minprice);
+        }
+        elseif(!empty($maxprice)){
+            $query->where('prise','<=',$maxprice);
+        }
+        $stadiums = $query->get();
+
+        if ($stadiums->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'No stadiums found with the given filters.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'data' => $stadiums
         ]);
     }
 

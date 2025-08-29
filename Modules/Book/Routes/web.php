@@ -1,5 +1,5 @@
 <?php
-
+use Modules\Book\Http\Controllers\StripeWebhookController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,3 +14,5 @@
 Route::prefix('book')->group(function() {
     Route::get('/', 'BookController@index');
 });
+Route::get('/stripe/onboarding/refresh', [StripeWebhookController::class, 'refreshOnboarding']);
+Route::get('/stripe/onboarding/return', [StripeWebhookController::class, 'handleOnboardingReturn']);

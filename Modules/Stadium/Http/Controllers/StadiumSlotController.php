@@ -52,7 +52,7 @@ class StadiumSlotController extends Controller
                         'start_time' => 'required|date_format:H:i',
                         'end_time' => 'required|date_format:H:i|after:start_time',
                         'stadium_id' => 'required|integer|exists:stadiums,id',
-                    'status' => 'nullable|in:available,booked,maintenance',
+                        'status' => 'nullable|in:available,maintenance',
                 ])->validate();
 
                 // ✅ تحقق من وقت الملعب
@@ -96,7 +96,7 @@ class StadiumSlotController extends Controller
                     'start_time' => 'required|date_format:H:i',
                     'end_time' => 'required|date_format:H:i|after:start_time',
                     'stadium_id' => 'required|integer|exists:stadiums,id',
-                'status' => 'nullable|in:available,booked,maintenance',
+                'status' => 'nullable|in:available,maintenance',
             ]);
 
             // ✅ تحقق من وقت الملعب
@@ -165,7 +165,7 @@ class StadiumSlotController extends Controller
                 'start_time' => 'required|date_format:H:i',
                 'end_time' => 'required|date_format:H:i|after:start_time',
                 'stadium_id' => 'sometimes|integer|exists:stadiums,id',
-            'status' => 'nullable|in:available,booked,maintenance',
+            'status' => 'nullable|in:available,maintenance',
         ]);
 
         // ✅ تحديد stadium_id إما من البيانات الجديدة أو القديمة

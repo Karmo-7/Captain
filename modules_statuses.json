@@ -5,5 +5,8 @@
     "Invitations": true,
     "Ads": true,
     "Facilities": true,
-    "Book": true
+    "Book": true,
+    "Controller": true,
+    "Paymentcontroller": true,
+    "PaymentController": true
 }
