@@ -8,7 +8,7 @@
     "Book": true,
     "Controller": true,
     "Paymentcontroller": true,
-    "PaymentController": true
+    "PaymentController": true,
     "Rating": true,
     "Reports": true
 }

@@ -87,11 +87,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function userMatches()
-{
+    {
     return $this->hasMany(\Modules\Invitations\Entities\UserMatch::class, 'user_id');
 
-}
- public function ads()
+    }
+    public function ads()
     {
         return $this->hasMany(\Modules\Ads\Entities\Ad::class);
     }
@@ -104,10 +104,10 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 
-<<<<<<< HEAD
 
 
-=======
+
+
 public function stadiumRatings()
 {
     return $this->hasMany(\Modules\Rating\Entities\stadiumRating::class);
@@ -136,5 +136,5 @@ public function facilityRatings()
     {
         return $this->hasMany(\Modules\Reports\Entities\Report::class, 'admin_id');
     }
->>>>>>> 73ce505db1bb6cf6c7bac9ee9f61a87718d46114
+
 }
