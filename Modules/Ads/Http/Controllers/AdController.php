@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class AdController extends Controller
 {
-    
+
     protected function successResponse($data, $message = 'Operation successful', $code = 200)
     {
         return response()->json([

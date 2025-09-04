@@ -12,11 +12,12 @@ use Modules\Stadium\Entities\Stadium;
 use Modules\Stadium\Http\Requests\filterRequest;
 use Modules\Stadium\Http\Requests\StadiumRequestUpdate;
 use App\Traits\ImageDeletable;
+use App\Traits\ImageUploadable;
 
 
 class StadiumController extends Controller
 {
-    use ImageDeletable;
+    use ImageDeletable,ImageUploadable;
 
     public function update(StadiumRequestUpdate $request, $id){
         $stadium=Stadium::find($id);
@@ -35,6 +36,14 @@ class StadiumController extends Controller
             ],401);
         }
         $validate=$request->validated();
+
+        // معالجة الصور
+        $photoPaths = [];
+        if ($request->hasFile('photos')) {
+            $photoPaths = $this->uploadImages($request->file('photos'), 'stadiums');
+        }
+
+        $validate['photos'] = $photoPaths;
         $stadium->update($validate);
         return response()->json([
             'status' => true,

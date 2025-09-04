@@ -11,7 +11,7 @@ use Modules\Stadium\Entities\Stadium;
 
 class StadiumSlotController extends Controller
 {
-    // ✅ دالة للرد الناجح
+    //  دالة للرد الناجح
     protected function successResponse($data, $message = 'Operation successful', $code = 200)
     {
         return response()->json([
@@ -22,7 +22,7 @@ class StadiumSlotController extends Controller
         ], $code);
     }
 
-    // ✅ دالة للرد بالفشل
+    // دالة للرد بالفشل
     protected function errorResponse($message = 'Something went wrong', $code = 400, $data = null)
     {
         return response()->json([

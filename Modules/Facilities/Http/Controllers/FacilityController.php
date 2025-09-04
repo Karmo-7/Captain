@@ -75,6 +75,13 @@ class FacilityController extends Controller
             ], 401);
         }
         $validate=$request->validated();
+        // معالجة الصور
+        $photoPaths = [];
+        if ($request->hasFile('photos')) {
+            $photoPaths = $this->uploadImages($request->file('photos'), 'Facilities');
+        }
+        $validate['photos'] = $photoPaths;
+
         $facility->update($validate);
         return response()->json([
             'status' => true,

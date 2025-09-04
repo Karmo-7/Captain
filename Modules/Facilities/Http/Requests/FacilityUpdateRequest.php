@@ -20,6 +20,8 @@ class FacilityUpdateRequest extends FormRequest
             ],
             'quantity' => 'nullable|integer|min:1',
             'description' => 'nullable|string',
+            'photos' => 'nullable|array',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 

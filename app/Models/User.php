@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Modules\Book\Entities\Book;
+use Modules\Book\Entities\StadiumSlotBooking;
 use Modules\Invitations\Entities\Team_Usesrinv;
 use Modules\Stadium\Entities\Stadium;
 use Modules\Stadium\Entities\StadiumRequest;
@@ -101,6 +102,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function stadiums(){
         return $this->hasMany(Stadium::class);
+    }
+
+    public function Stadiumslotbooking()
+    {
+        return $this->hasMany(StadiumSlotBooking::class);
     }
 
 

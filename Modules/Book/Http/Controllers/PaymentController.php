@@ -65,17 +65,18 @@ class PaymentController extends Controller
         try {
             Stripe::setApiKey(env('STRIPE_SECRET'));
             // إنشاء PaymentIntent
-            $paymentIntent =PaymentIntent::create([
-                'amount' => $request->amount * 100, // بالسنتات
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $request->amount * 100, // المبلغ بالسنت
                 'currency' => 'usd',
-                'customer'=>$player->stripe_customer_id,
+                'customer' => $player->stripe_customer_id,
                 'payment_method_types' => ['card'],
                 'transfer_data' => [
                     'destination' => $stadiumOwner->stripe_account_id,
                 ],
-
+                'on_behalf_of' => $stadiumOwner->stripe_account_id,
+                // إذا بدك تضيف عمولة للمنصة
+                // 'application_fee_amount' => 200,
             ]);
-
 
             // تسجيل الدفع بقاعدة البيانات
             $payment = Payment::create([
