@@ -26,6 +26,9 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
+
+
+
     protected $fillable = [
 
         'email',
@@ -52,6 +55,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<string, string>
      */
     protected $casts = [
+        'is_banned' => 'boolean',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];

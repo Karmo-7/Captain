@@ -151,6 +151,18 @@ class AuthController extends Controller
         ], 200);
     }
 
+protected function authenticated(Request $request, $user)
+{
+    if ($user->is_banned) {
+        auth()->logout(); // يخرج اللاعب
+        return response()->json([
+            'status' => false,
+            'message' => 'Your account has been banned.',
+        ], 403);
+    }
+}
+
+
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();

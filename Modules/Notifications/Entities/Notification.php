@@ -26,6 +26,10 @@ class Notification extends Model
         'INVITE_RECEIVED' => 'invite_received',   // وصلت دعوة
         'INVITE_ACCEPTED' => 'invite_accepted',   // تم قبول دعوة
         'INVITE_REJECTED' => 'invite_rejected',   // تم رفض دعوة
+        'PLAYER_REPORTED' => 'player_reported', // تم الإبلاغ عن لاعب
+        'PLAYER_NOTIFIED' => 'player_notified', // تم إشعار اللاعب
+       'PLAYER_BANNED'   => 'player_banned',   // تم حظر اللاعب
+        'PLAYER_UNBANNED'   => 'player_unbanned',
     ];
 
     // العلاقة مع المستخدم المستلم
