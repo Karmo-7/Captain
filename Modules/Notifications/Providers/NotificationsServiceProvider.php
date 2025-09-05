@@ -1,21 +1,21 @@
 <?php
 
-namespace Modules\Invitations\Providers;
+namespace Modules\Notifications\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 
-class InvitationsServiceProvider extends ServiceProvider
+class NotificationsServiceProvider extends ServiceProvider
 {
     /**
      * @var string $moduleName
      */
-    protected $moduleName = 'Invitations';
+    protected $moduleName = 'Notifications';
 
     /**
      * @var string $moduleNameLower
      */
-    protected $moduleNameLower = 'invitations';
+    protected $moduleNameLower = 'notifications';
 
     /**
      * Boot the application events.
@@ -38,8 +38,6 @@ class InvitationsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(\Modules\Invitations\Providers\EventServiceProvider::class);
-
     }
 
     /**

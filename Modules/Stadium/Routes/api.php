@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Stadium\Http\Controllers\StadiumController;
 use Modules\Stadium\Http\Controllers\StadiumRequestController;
+use Modules\Stadium\Http\Controllers\StadiumSearchController;
 use Modules\Stadium\Http\Controllers\StadiumSlotController;
 
 /*
@@ -25,7 +26,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('stadium-slots', StadiumSlotController::class);
     Route::get('stadium-slots/stadium/{stadium_id}', [StadiumSlotController::class, 'getSlotsByStadium']);
-
+Route::get('/stadiums-leagues/search', [StadiumSearchController::class, 'search']);
 
 });
 
@@ -34,7 +35,7 @@ Route::middleware(['auth:api','role:admin'])->prefix('stadium')->group(function(
     Route::post('/replyask/{id}',[StadiumRequestController::class,'ReplyAsk']);
     Route::get('/viewAllRequest',[StadiumRequestController::class,'viewall']);
 
-    
+
 });
 
 Route::prefix('stadium')->middleware(['auth:api', 'role:stadium_owner|admin'])->group(function () {

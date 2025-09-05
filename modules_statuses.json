@@ -7,5 +7,6 @@
     "Facilities": true,
     "Book": true,
     "Rating": true,
-    "Reports": true
+    "Reports": true,
+    "Notifications": true
 }

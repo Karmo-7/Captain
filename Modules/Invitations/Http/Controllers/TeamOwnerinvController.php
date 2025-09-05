@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Invitations\Entities\Team_Ownerinv;
 
+// استيراد الأحداث
+use Modules\Invitations\Events\OwnerInvitationSent;
+use Modules\Invitations\Events\OwnerInvitationAccepted;
+use Modules\Invitations\Events\OwnerInvitationDeclined;
+
 class TeamOwnerinvController extends Controller
 {
     // ✅ دوال الرد الموحد
@@ -55,6 +60,9 @@ class TeamOwnerinvController extends Controller
                 'owner_id' => auth()->id(),
                 'is_team' => $request->is_team,
             ]);
+
+            // إطلاق حدث إنشاء الدعوة
+            event(new OwnerInvitationSent($invitation));
 
             return $this->successResponse($invitation, 'Owner invitation created successfully', 201);
         } catch (\Exception $e) {
@@ -131,7 +139,7 @@ class TeamOwnerinvController extends Controller
         return $this->successResponse($data, 'Invitations received by team retrieved successfully');
     }
 
-      // ✅ Approve owner invitation
+    // ✅ Approve owner invitation
     public function approveInvitation(Request $request, $id)
     {
         $invitation = Team_Ownerinv::find($id);
@@ -146,16 +154,17 @@ class TeamOwnerinvController extends Controller
 
         $invitation->update(['status' => 'accepted']);
 
-        // If the invitation is sent to a team owner and accepted
+        // إذا كانت الدعوة مرسلة لفريق و تم قبولها
         if ($invitation->is_team && $invitation->owner_id) {
             $profile = Profile::where('user_id', $invitation->owner_id)->first();
-            if (!$profile) {
-                return $this->errorResponse('Profile not found for the invited owner', 404);
+            if ($profile) {
+                // ربط المالك بالفريق
+                $profile->update(['team_id' => $invitation->team_id]);
             }
-
-            // Link owner to the team
-            $profile->update(['team_id' => $invitation->team_id]);
         }
+
+        // إطلاق حدث الموافقة
+        event(new OwnerInvitationAccepted($invitation));
 
         return $this->successResponse($invitation, 'Owner invitation approved and linked successfully');
     }
@@ -175,8 +184,9 @@ class TeamOwnerinvController extends Controller
 
         $invitation->update(['status' => 'declined']);
 
+        // إطلاق حدث الرفض
+        event(new OwnerInvitationDeclined($invitation));
+
         return $this->successResponse($invitation, 'Owner invitation rejected successfully');
     }
-
-
 }
