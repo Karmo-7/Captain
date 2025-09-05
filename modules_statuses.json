@@ -10,5 +10,6 @@
     "Paymentcontroller": true,
     "PaymentController": true,
     "Rating": true,
-    "Reports": true
+    "Reports": true,
+    "Notifications": true
 }

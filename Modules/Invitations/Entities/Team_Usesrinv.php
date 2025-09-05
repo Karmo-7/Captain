@@ -27,8 +27,10 @@ class Team_Usesrinv extends Model
     public function sender()
     {
         if ($this->is_team) {
+
             return $this->belongsTo(\Modules\Team\Entities\Team::class, 'team_id');
         } else {
+
             return $this->belongsTo(\App\Models\User::class, 'team_id');
         }
     }
