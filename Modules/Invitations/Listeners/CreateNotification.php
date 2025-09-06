@@ -51,7 +51,8 @@ class CreateNotification
          */
         if ($inv->is_team) {
             // Team sent the invitation → receiver is the owner
-            $userId = $inv->user_id;
+            $userId= $inv->receiver_id;
+
         } else {
             // Owner sent the invitation → receiver is the team captain
             $team = Team::find($inv->team_id);
@@ -59,6 +60,7 @@ class CreateNotification
         }
 
         if (!$userId) {
+
             return; // Safety check: no valid user to send notification
         }
 
