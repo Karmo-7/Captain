@@ -8,14 +8,14 @@ use Modules\Reports\Entities\Report;
 class ReportNotificationService
 {
     /**
-     * Send a notification when a new report is created
+     * إشعار Admin عند إنشاء تقرير جديد
      */
     public static function sendReportCreatedNotification(Report $report): Notification
     {
         return Notification::create([
-            'title'           => 'You have been reported',
-            'description'     => "Reason: {$report->reason}",
-            'user_id'         => $report->player_id,
+            'title'           => 'New Player Report',
+            'description'     => "Player ID: {$report->player_id}, Reason: {$report->reason}",
+            'user_id'         => $report->admin_id,  // الآن يرسل للإدمن
             'type'            => Notification::TYPE['PLAYER_REPORTED'],
             'notifiable_type' => Report::class,
             'notifiable_id'   => $report->id,
@@ -23,22 +23,22 @@ class ReportNotificationService
     }
 
     /**
-     * Send a notification when the player has been notified about the report
+     * إشعار صاحب الملعب بأن تقريره تمت مراجعته
      */
-    public static function sendPlayerNotifiedNotification(Report $report): Notification
+    public static function sendStadiumOwnerReportReviewedNotification(Report $report): Notification
     {
         return Notification::create([
-            'title'           => 'Your report has been reviewed',
-            'description'     => "The player has been notified regarding the report.",
+            'title'           => 'Report Reviewed',
+            'description'     => "Your report against player ID {$report->player_id} has been reviewed by the Admin.",
             'user_id'         => $report->stadium_owner_id,
-            'type'            => Notification::TYPE['PLAYER_NOTIFIED'],
+            'type'            => 'report_reviewed', // يمكن إضافة نوع جديد في Notification::TYPE
             'notifiable_type' => Report::class,
             'notifiable_id'   => $report->id,
         ]);
     }
 
     /**
-     * Send a notification when the player is banned
+     * إشعار اللاعب عند حظر الحساب
      */
     public static function sendPlayerBannedNotification(Report $report): Notification
     {
@@ -51,16 +51,34 @@ class ReportNotificationService
             'notifiable_id'   => $report->id,
         ]);
     }
-    public static function sendPlayerUnbannedNotification(Report $report): Notification
-{
-    return Notification::create([
-        'title'           => 'تم رفع الحظر عنك',
-        'description'     => 'لقد تم رفع الحظر عنك بناءً على تقرير مالك الملعب.',
-        'user_id'         => $report->player_id,
-        'type'            => 'player_unbanned', // يمكنك إضافة نوع جديد في Notification::TYPE
-        'notifiable_type' => Report::class,
-        'notifiable_id'   => $report->id,
-    ]);
-}
 
+    /**
+     * إشعار اللاعب عند رفع الحظر
+     */
+    public static function sendPlayerUnbannedNotification(Report $report): Notification
+    {
+        return Notification::create([
+            'title'           => 'تم رفع الحظر عنك',
+            'description'     => 'تم رفع الحظر عنك بناءً على قرار الإدارة.',
+            'user_id'         => $report->player_id,
+            'type'            => Notification::TYPE['PLAYER_UNBANNED'],
+            'notifiable_type' => Report::class,
+            'notifiable_id'   => $report->id,
+        ]);
+    }
+
+    /**
+     * إشعار اللاعب بتنبيه دون حظر
+     */
+    public static function sendPlayerWarningNotification(Report $report): Notification
+    {
+        return Notification::create([
+            'title'           => 'Warning',
+            'description'     => "You received a warning regarding your behavior reported by the stadium owner.",
+            'user_id'         => $report->player_id,
+            'type'            => 'PLAYER_WARNING', // أضف هذا النوع في Notification::TYPE
+            'notifiable_type' => Report::class,
+            'notifiable_id'   => $report->id,
+        ]);
+    }
 }

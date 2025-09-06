@@ -30,6 +30,8 @@ class Notification extends Model
         'PLAYER_NOTIFIED' => 'player_notified', // تم إشعار اللاعب
        'PLAYER_BANNED'   => 'player_banned',   // تم حظر اللاعب
         'PLAYER_UNBANNED'   => 'player_unbanned',
+        'PLAYER_WARNING'    => 'player_warning',
+        'REPORT_REVIEWED' => 'report_reviewed',
     ];
 
     // العلاقة مع المستخدم المستلم

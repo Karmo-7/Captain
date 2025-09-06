@@ -18,6 +18,8 @@ use Modules\Invitations\Http\Controllers\UserMatchController;
 Route::middleware('auth:api')->group(function () {
 
     Route::get('leagues/{leagueId}/teams', [InvitationMatchController::class, 'teamsByLeague']);
+Route::get('invitations/accepted/league/{leagueId}', [TeamOwnerinvController::class, 'acceptedInvitationsByLeague']);
+Route::get('teams/league/{leagueId}', [TeamOwnerinvController::class, 'teamsInLeague']);
 
 Route::get('leagues/my', [LeagueController::class, 'myLeagues']);
 Route::get('leagues/stadium/{stadium_id}', [LeagueController::class, 'leaguesByStadium']);

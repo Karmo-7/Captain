@@ -11,6 +11,7 @@ use Modules\Invitations\Entities\Team_Ownerinv;
 use Modules\Invitations\Events\OwnerInvitationSent;
 use Modules\Invitations\Events\OwnerInvitationAccepted;
 use Modules\Invitations\Events\OwnerInvitationDeclined;
+use Modules\Team\Entities\Team;
 
 class TeamOwnerinvController extends Controller
 {
@@ -207,4 +208,32 @@ class TeamOwnerinvController extends Controller
 
         return $this->successResponse($invitation, 'Owner invitation rejected successfully');
     }
+
+    // Get all invitations with status accepted
+// Get all accepted invitations by league
+// Get all accepted invitations by league with team data
+public function acceptedInvitationsByLeague($leagueId)
+{
+    $data = Team_Ownerinv::with('team') // هنا نضمن بيانات الفريق
+                         ->where('status', 'accepted')
+                         ->where('league_id', $leagueId)
+                         ->get();
+
+    return $this->successResponse($data, 'Accepted invitations for this league with team data retrieved successfully');
+}
+
+
+// Get all teams participating in a league (with accepted invitations)
+public function teamsInLeague($leagueId)
+{
+    $teams = Team::whereHas('ownerInvitations', function ($query) use ($leagueId) {
+        $query->where('status', 'accepted')
+              ->where('league_id', $leagueId);
+    })->get();
+
+    return $this->successResponse($teams, 'Teams participating in the league retrieved successfully');
+}
+
+
+
 }
