@@ -42,7 +42,7 @@ class ReportsController extends Controller
      */
 public function store(Request $request)
 {
-    // تحقق من صحة البيانات
+    // ✅ تحقق من صحة البيانات
     $validated = $request->validate([
         'player_id' => 'required|exists:users,id',
         'reason'    => 'required|string|max:255',
@@ -51,7 +51,22 @@ public function store(Request $request)
     $validated['stadium_owner_id'] = auth()->id(); // مالك الملعب
     $validated['status'] = 'pending';
 
-    // اختيار أي Admin موجود تلقائياً باستخدام Spatie Roles
+    // ✅ التحقق من وجود تقرير سابق لنفس اللاعب ولنفس السبب
+    $existingReport = Report::where('stadium_owner_id', auth()->id())
+        ->where('player_id', $request->player_id)
+        ->where('reason', $request->reason)
+        ->whereIn('status', ['pending', 'notified', 'banned']) // لو التقرير مفتوح أو معلق → نمنع التكرار
+        ->first();
+
+    if ($existingReport) {
+        return $this->errorResponse(
+            'لقد قمت بإنشاء تقرير سابق ضد هذا اللاعب لنفس السبب، ولا يمكنك تكرار التقرير',
+            409,
+            $existingReport
+        );
+    }
+
+    // ✅ اختيار أي Admin موجود تلقائياً باستخدام Spatie Roles
     $admin = User::role('admin')->first();
     if (!$admin) {
         return $this->errorResponse('No admin found to assign the report', 404);
@@ -59,7 +74,7 @@ public function store(Request $request)
 
     $validated['admin_id'] = $admin->id;
 
-    // إنشاء التقرير
+    // ✅ إنشاء التقرير الجديد
     $report = Report::create($validated);
 
     // إرسال إشعار عند إنشاء التقرير
@@ -70,6 +85,7 @@ public function store(Request $request)
 
     return $this->successResponse($report, 'Report created successfully', 201);
 }
+
 
 
 
