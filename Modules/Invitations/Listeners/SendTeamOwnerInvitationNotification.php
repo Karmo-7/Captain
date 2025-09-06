@@ -33,14 +33,16 @@ class SendTeamOwnerInvitationNotification
         $recipients = [];
 
         if ($inv->is_team) {
-            $team = $inv->team ?? null;
+             $receiver = $inv->owner ?? null;
+            $recipients = $receiver ? [$receiver] : [];
+
+
+        } else {
+        $team = $inv->team ?? null;
 
             if ($team && $team->captain) {
                 $recipients = [$team->captain];  // ✅ نرسل فقط للكابتن
             }
-        } else {
-            $receiver = $inv->owner ?? null;
-            $recipients = $receiver ? [$receiver] : [];
         }
 
         // إذا لم نجد أي مستلم → لا نرسل إشعار
