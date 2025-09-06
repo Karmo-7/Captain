@@ -2,7 +2,7 @@
 
 namespace Modules\Invitations\Listeners;
 
-use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Modules\Notifications\Entities\Notification;
 
 class SendTeamOwnerInvitationNotification
@@ -19,28 +19,40 @@ class SendTeamOwnerInvitationNotification
 
         $leagueName = $inv->league->name ?? 'Unknown League';
 
-        // Determine sender display name
+        // تحديد اسم المرسل
         $sender = $inv->actualSender();
         $senderName = $inv->is_team
             ? ($sender->name ?? 'Unknown Team')
             : ($sender->email ?? 'Unknown Owner');
 
         /**
-         * ✅ Determine recipient based on invitation type
-         * - If it's a player invitation, notify only that player.
-         * - If it's a team invitation, notify only the captain.
+         * ✅ تحديد المستلمين:
+         * - إذا كانت دعوة فريق → إشعار للكابتن فقط
+         * - إذا كانت دعوة لاعب → إشعار للمالك مباشرة
          */
+        $recipients = [];
+
         if ($inv->is_team) {
-            // Team invitation → notify captain only
             $team = $inv->team ?? null;
-            $recipients = $team && $team->captain ? [$team->captain] : [];
+
+            if ($team && $team->captain) {
+                $recipients = [$team->captain];  // ✅ نرسل فقط للكابتن
+            }
         } else {
-            // Player invitation → notify only that player
-            $receiver = $inv->receiver ?? null;
+            $receiver = $inv->owner ?? null;
             $recipients = $receiver ? [$receiver] : [];
         }
 
-        // Determine notification title
+        // إذا لم نجد أي مستلم → لا نرسل إشعار
+        if (empty($recipients)) {
+            Log::warning('No recipients found for owner invitation', [
+                'invitation_id' => $inv->id,
+                'team_id' => $inv->team_id
+            ]);
+            return;
+        }
+
+        // تحديد عنوان الإشعار
         $title = $inv->is_team
             ? match ($inv->status) {
                 'pending'  => "Team Sent You an Invitation ($leagueName)",
@@ -55,7 +67,7 @@ class SendTeamOwnerInvitationNotification
                 default    => "Owner Invitation Update ($leagueName)",
             };
 
-        // Determine notification type
+        // تحديد نوع الإشعار
         $type = match ($inv->status) {
             'pending'  => Notification::TYPE['INVITE_RECEIVED'],
             'accepted' => Notification::TYPE['INVITE_ACCEPTED'],
@@ -63,7 +75,7 @@ class SendTeamOwnerInvitationNotification
             default    => Notification::TYPE['INVITE_RECEIVED'],
         };
 
-        // ✅ Send notification only to selected recipients
+        // ✅ إنشاء الإشعار
         foreach ($recipients as $receiver) {
             Notification::create([
                 'title'           => $title,
