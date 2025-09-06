@@ -41,34 +41,52 @@ class TeamOwnerinvController extends Controller
         return $this->successResponse($data, 'All owner invitations retrieved successfully');
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $request->validate([
-                'status' => 'nullable|in:pending,accepted,declined',
-                'sent_at' => 'nullable|string|max:45',
-                'team_id' => 'required|integer',
-                'league_id' => 'required|integer',
-                'is_team' => 'required|boolean'
-            ]);
+   public function store(Request $request)
+{
+    try {
+        $request->validate([
+            'status' => 'nullable|in:pending,accepted,declined',
+            'sent_at' => 'nullable|string|max:45',
+            'team_id' => 'required|integer',
+            'league_id' => 'required|integer',
+            'is_team' => 'required|boolean'
+        ]);
 
-            $invitation = Team_Ownerinv::create([
-                'status' => $request->status ?? 'pending',
-                'sent_at' => $request->sent_at,
-                'team_id' => $request->team_id,
-                'league_id' => $request->league_id,
-                'owner_id' => auth()->id(),
-                'is_team' => $request->is_team,
-            ]);
+        // ✅ التحقق إذا كان المالك قد أرسل نفس الدعوة مسبقًا
+        $existingInvitation = Team_Ownerinv::where('owner_id', auth()->id())
+            ->where('team_id', $request->team_id)
+            ->where('league_id', $request->league_id)
+            ->where('is_team', $request->is_team) // 👈 أخذنا is_team بالاعتبار
+            ->whereIn('status', ['pending', 'accepted']) // منع تكرار الدعوة إذا كانت معلقة أو مقبولة
+            ->first();
 
-            // إطلاق حدث إنشاء الدعوة
-            event(new OwnerInvitationSent($invitation));
-
-            return $this->successResponse($invitation, 'Owner invitation created successfully', 201);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 400);
+        if ($existingInvitation) {
+            return $this->errorResponse(
+                'لقد أرسلت دعوة مسبقًا لنفس الفريق بهذه الطريقة',
+                409,
+                $existingInvitation
+            );
         }
+
+        // ✅ إذا لم توجد دعوة سابقة، نقوم بإنشائها
+        $invitation = Team_Ownerinv::create([
+            'status' => $request->status ?? 'pending',
+            'sent_at' => $request->sent_at,
+            'team_id' => $request->team_id,
+            'league_id' => $request->league_id,
+            'owner_id' => auth()->id(),
+            'is_team' => $request->is_team,
+        ]);
+
+        // إطلاق حدث إنشاء الدعوة
+        event(new OwnerInvitationSent($invitation));
+
+        return $this->successResponse($invitation, 'تم إرسال الدعوة بنجاح', 201);
+    } catch (\Exception $e) {
+        return $this->errorResponse($e->getMessage(), 400);
     }
+}
+
 
     public function show($id)
     {

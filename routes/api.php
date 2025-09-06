@@ -87,3 +87,4 @@ Route::get('/test/verify-link/{userId}', function ($userId) {
     ]);
 });
 
+Route::get('/players', [AuthController::class, 'getAllPlayers'])->middleware('auth:api');

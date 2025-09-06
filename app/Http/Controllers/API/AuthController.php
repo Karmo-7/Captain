@@ -368,4 +368,18 @@ protected function authenticated(Request $request, $user)
             ], 500);
         }
     }
+
+public function getAllPlayers()
+{
+    $players = User::role('player')->with('profile')->get();
+
+    return response()->json([
+        'status' => true,
+        'status_code' => 200,
+        'message' => 'Players retrieved successfully',
+        'data' => $players
+    ], 200);
+}
+
+
 }
