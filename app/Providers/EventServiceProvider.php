@@ -15,10 +15,14 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
-    ];
+    Registered::class => [
+        SendEmailVerificationNotification::class,
+    ],
+    \Modules\Invitations\Events\InvitationSent::class => [
+        \Modules\Invitations\Listeners\SendTeamOwnerInvitationNotification::class,
+    ],
+];
+
 
     /**
      * Register any events for your application.
