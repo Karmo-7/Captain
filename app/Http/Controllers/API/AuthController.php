@@ -371,7 +371,10 @@ protected function authenticated(Request $request, $user)
 
 public function getAllPlayers()
 {
-    $players = User::role('player')->with('profile')->get();
+    // استعلام لجميع اللاعبين بغض النظر عن guard
+    $players = User::whereHas('roles', function($q) {
+        $q->where('name', 'player');
+    })->with('profile')->get();
 
     return response()->json([
         'status' => true,
@@ -380,6 +383,7 @@ public function getAllPlayers()
         'data' => $players
     ], 200);
 }
+
 
 
 }
