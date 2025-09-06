@@ -3,6 +3,7 @@
 namespace Modules\Invitations\Listeners;
 
 use Modules\Notifications\Entities\Notification;
+use Modules\Team\Entities\Team;
 
 class CreateNotification
 {
@@ -23,7 +24,7 @@ class CreateNotification
             ? ($inv->is_team ? ($receiver->email ?? 'Unknown User') : ($receiver->name ?? 'Unknown Team'))
             : 'Unknown';
 
-        // Determine title and type based on status
+        // Determine notification title & type based on status
         switch ($inv->status) {
             case 'pending':
                 $title = 'New Invitation';
@@ -34,7 +35,7 @@ class CreateNotification
                 $type = Notification::TYPE['INVITE_ACCEPTED'];
                 break;
             case 'declined':
-                $title = 'Invitation declined';
+                $title = 'Invitation Declined';
                 $type = Notification::TYPE['INVITE_REJECTED'];
                 break;
             default:
@@ -43,10 +44,29 @@ class CreateNotification
                 break;
         }
 
+        /**
+         * ✅ Determine who should receive the notification
+         * If the invitation is sent by a team → receiver is owner
+         * If the invitation is sent by an owner → receiver is a team → send to team's captain
+         */
+        if ($inv->is_team) {
+            // Team sent the invitation → receiver is the owner
+            $userId = $inv->user_id;
+        } else {
+            // Owner sent the invitation → receiver is the team captain
+            $team = Team::find($inv->team_id);
+            $userId = $team ? $team->captin_id : null;
+        }
+
+        if (!$userId) {
+            return; // Safety check: no valid user to send notification
+        }
+
+        // ✅ Create notification
         Notification::create([
             'title' => $title,
             'description' => "From {$senderName} to {$receiverName}",
-            'user_id' => $inv->receiver_id,
+            'user_id' => $userId,
             'notifiable_type' => $inv::class,
             'notifiable_id' => $inv->id,
             'type' => $type,
