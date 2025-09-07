@@ -42,7 +42,7 @@ class TeamOwnerinvController extends Controller
         return $this->successResponse($data, 'All owner invitations retrieved successfully');
     }
 
-   public function store(Request $request)
+  public function store(Request $request)
 {
     try {
         $request->validate([
@@ -53,12 +53,24 @@ class TeamOwnerinvController extends Controller
             'is_team' => 'required|boolean'
         ]);
 
-        // ✅ التحقق إذا كان المالك قد أرسل نفس الدعوة مسبقًا
-        $existingInvitation = Team_Ownerinv::where('owner_id', auth()->id())
+        // ✅ Get league info to fetch the owner if the team sends the invitation
+        $league = \Modules\Invitations\Entities\League::find($request->league_id);
+
+        if (!$league) {
+            return $this->errorResponse('League not found', 404);
+        }
+
+        // ✅ Decide the owner_id dynamically:
+        // If is_team == true → owner is league creator
+        // If is_team == false → owner is the logged-in user
+        $ownerId = $request->is_team ? $league->created_by : auth()->id();
+
+        // ✅ Check if this invitation already exists
+        $existingInvitation = Team_Ownerinv::where('owner_id', $ownerId)
             ->where('team_id', $request->team_id)
             ->where('league_id', $request->league_id)
-            ->where('is_team', $request->is_team) // 👈 أخذنا is_team بالاعتبار
-            ->whereIn('status', ['pending', 'accepted']) // منع تكرار الدعوة إذا كانت معلقة أو مقبولة
+            ->where('is_team', $request->is_team)
+            ->whereIn('status', ['pending', 'accepted'])
             ->first();
 
         if ($existingInvitation) {
@@ -69,17 +81,17 @@ class TeamOwnerinvController extends Controller
             );
         }
 
-        // ✅ إذا لم توجد دعوة سابقة، نقوم بإنشائها
+        // ✅ Create the invitation
         $invitation = Team_Ownerinv::create([
             'status' => $request->status ?? 'pending',
             'sent_at' => $request->sent_at,
             'team_id' => $request->team_id,
             'league_id' => $request->league_id,
-            'owner_id' => auth()->id(),
+            'owner_id' => $ownerId,
             'is_team' => $request->is_team,
         ]);
 
-        // إطلاق حدث إنشاء الدعوة
+        // 🔔 Trigger invitation event
         event(new OwnerInvitationSent($invitation));
 
         return $this->successResponse($invitation, 'تم إرسال الدعوة بنجاح', 201);

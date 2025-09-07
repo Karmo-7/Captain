@@ -40,37 +40,49 @@ class TeamUsesrinvController extends Controller
     }
 
     // إنشاء دعوة
-    public function store(Request $request)
-    {
-        try {
-            $request->validate([
-                'status' => 'nullable|in:pending,accepted,declined',
-                'sent_at' => 'nullable|string|max:45',
-                'team_id' => 'required|integer|exists:teams,id',
-                'receiver_id' => 'required|integer',
-                'is_team' => 'required|boolean',
-            ]);
+   public function store(Request $request)
+{
+    try {
+        $request->validate([
+            'status' => 'nullable|in:pending,accepted,declined',
+            'sent_at' => 'nullable|string|max:45',
+            'team_id' => 'required|integer',
+            'receiver_id' => 'required|integer',
+            'is_team' => 'required|boolean',
+        ]);
 
-            // تحقق من وجود receiver حسب نوع الدعوة
-            if ($request->is_team) {
-                $request->validate(['receiver_id' => 'exists:users,id']);
-            } else {
-                $request->validate(['receiver_id' => 'exists:teams,id']);
-            }
-
-            $invitation = Team_Usesrinv::create($request->all());
-
-            // تحميل العلاقات قبل إطلاق الحدث
-            $invitation->load(['sender', 'receiver']);
-
-            // إطلاق الحدث
-            event(new InvitationSent($invitation));
-
-            return $this->successResponse($this->formatInvitation($invitation), 'Invitation created successfully', 201);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 400);
+        // تحقق من وجود receiver حسب نوع الدعوة
+        if ($request->is_team) {
+            $request->validate(['receiver_id' => 'exists:users,id']);
+        } else {
+            $request->validate(['receiver_id' => 'exists:teams,id']);
         }
+
+        // ✅ تحقق إذا الدعوة موجودة مسبقًا
+        $existingInvitation = Team_Usesrinv::where('team_id', $request->team_id)
+            ->where('receiver_id', $request->receiver_id)
+            ->where('is_team', $request->is_team)
+            ->first();
+
+        if ($existingInvitation) {
+            return $this->errorResponse('Invitation already exists', 400);
+        }
+
+        // إنشاء الدعوة
+        $invitation = Team_Usesrinv::create($request->all());
+
+        // تحميل العلاقات قبل إطلاق الحدث
+        $invitation->load(['sender', 'receiver']);
+
+        // إطلاق الحدث
+        event(new InvitationSent($invitation));
+
+        return $this->successResponse($this->formatInvitation($invitation), 'Invitation created successfully', 201);
+
+    } catch (\Exception $e) {
+        return $this->errorResponse($e->getMessage(), 400);
     }
+}
 
     // جلب دعوة واحدة
     public function show($id)

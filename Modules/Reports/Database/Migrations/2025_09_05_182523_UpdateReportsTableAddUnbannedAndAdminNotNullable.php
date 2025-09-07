@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up()
     {
-        // تحديث enum لإضافة حالة 'unbanned'
+        // 1. تحديث enum لإضافة 'unbanned'
         DB::statement("ALTER TABLE reports MODIFY status ENUM('pending', 'notified', 'banned', 'unbanned') NOT NULL DEFAULT 'pending'");
 
-        // إزالة المفتاح الأجنبي القديم
+        // 2. إزالة المفتاح الأجنبي القديم
         Schema::table('reports', function (Blueprint $table) {
             $table->dropForeign(['admin_id']);
         });
 
-        // جعل admin_id NOT NULL
+        // 3. جعل admin_id NOT NULL
         DB::statement("ALTER TABLE reports MODIFY admin_id BIGINT UNSIGNED NOT NULL");
 
-        // إعادة ربط المفتاح الخارجي مع cascade
+        // 4. إعادة ربط المفتاح الخارجي مع cascade
         Schema::table('reports', function (Blueprint $table) {
             $table->foreign('admin_id')
                 ->references('id')
@@ -30,18 +30,18 @@ return new class extends Migration {
 
     public function down()
     {
-        // إرجاع enum للحالات القديمة
+        // 1. إرجاع enum للحالات القديمة
         DB::statement("ALTER TABLE reports MODIFY status ENUM('pending', 'notified', 'banned') NOT NULL DEFAULT 'pending'");
 
-        // حذف المفتاح الأجنبي الحالي
+        // 2. حذف المفتاح الأجنبي الحالي
         Schema::table('reports', function (Blueprint $table) {
             $table->dropForeign(['admin_id']);
         });
 
-        // جعل العمود nullable مرة ثانية
+        // 3. جعل العمود nullable مرة ثانية
         DB::statement("ALTER TABLE reports MODIFY admin_id BIGINT UNSIGNED NULL");
 
-        // إعادة المفتاح الأجنبي مع set null (الوضع الأصلي)
+        // 4. إعادة المفتاح الأجنبي مع set null (الوضع الأصلي)
         Schema::table('reports', function (Blueprint $table) {
             $table->foreign('admin_id')
                 ->references('id')
