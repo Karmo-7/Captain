@@ -46,7 +46,7 @@ class TeamUsesrinvController extends Controller
         $request->validate([
             'status' => 'nullable|in:pending,accepted,declined',
             'sent_at' => 'nullable|string|max:45',
-            'team_id' => 'required|integer|exists:teams,id',
+            'team_id' => 'required|integer',
             'receiver_id' => 'required|integer',
             'is_team' => 'required|boolean',
         ]);

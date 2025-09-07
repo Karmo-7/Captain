@@ -55,12 +55,12 @@ class CreateNotification
 
         } else {
             // Owner sent the invitation → receiver is the team captain
-            $team = Team::find($inv->team_id);
+            $team = Team::find($inv->receiver_id);
             $userId = $team ? $team->captin_id : null;
         }
 
         if (!$userId) {
-
+            dd('ggggggg');
             return; // Safety check: no valid user to send notification
         }
 
