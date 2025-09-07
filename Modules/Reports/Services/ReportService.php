@@ -37,4 +37,20 @@ class ReportService
     return $player;
 }
 
+public static function warnPlayerFromReport(int $reportId)
+{
+    $report = Report::findOrFail($reportId);
+    $player = User::findOrFail($report->player_id);
+
+    // تحديث حالة التقرير إلى warning
+    $report->status = 'warning';
+    $report->save();
+
+    // إرسال إشعار تنبيه
+    ReportNotificationService::sendPlayerWarningNotification($report);
+
+    return $report;
+}
+
+
 }

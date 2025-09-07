@@ -89,16 +89,27 @@ class ReportsController extends Controller
 
 
     // جلب جميع التقارير
-    public function index()
-    {
-        $user = auth()->user();
+public function index()
+{
+    $user = auth()->user();
 
-        $reports = Report::with(['player', 'stadiumOwner', 'admin'])
-            ->where('stadium_owner_id', $user->id)
-            ->get();
+    $query = Report::with(['player', 'stadiumOwner', 'admin']);
 
-        return $this->successResponse($reports, 'Reports retrieved successfully for the current user');
+    if ($user->hasRole('admin')) {
+        // ✅ Admin → يشوف كل التقارير الموكلة له فقط
+        $reports = $query->where('admin_id', $user->id)->get();
+    } elseif ($user->hasRole('stadium_owner')) {
+        // ✅ Stadium Owner → يشوف فقط تقاريره
+        $reports = $query->where('stadium_owner_id', $user->id)->get();
+    } else {
+        // ✅ أي مستخدم آخر (مثل player) → ما يرجعله شيء
+        $reports = collect();
     }
+
+    return $this->successResponse($reports, 'Reports retrieved successfully');
+}
+
+
 
     // تحديث حالة التقرير (notified / banned / resolved / warning)
     public function updateStatus(Request $request, Report $report)
