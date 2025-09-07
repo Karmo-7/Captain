@@ -13,6 +13,7 @@ use Modules\Sport\Entities\Sport;
 class Stadium extends Model
 {
     use HasFactory;
+    
 
  public function slots()
     {
@@ -23,6 +24,7 @@ class Stadium extends Model
     'photos', 'Length','Width','owner_number','start_time','end_time','price',
     'deposit','duration','latitude', 'longitude'];
     protected $table='stadiums';
+    protected $appends = ['average_rating'];
 
     protected $casts = [
         'photos' => 'array',
@@ -49,7 +51,7 @@ class Stadium extends Model
 
     protected static function newFactory()
     {
-      //  return \Modules\Stadium\Database\factories\StadiumFactory::new();
+       return \Modules\Stadium\Database\factories\StadiumFactory::new();
     }
 
 
@@ -66,12 +68,10 @@ class Stadium extends Model
     }
 
 
-
-
-public function averageRating()
-{
-    return $this->ratings()->avg('rating');
-}
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->avg('rating');
+    }
   public function ratings()
     {
         return $this->hasMany(\Modules\Rating\Entities\StadiumRating::class, 'stadium_id');

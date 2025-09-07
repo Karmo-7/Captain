@@ -24,12 +24,13 @@ Route::middleware('auth:api')->get('/book', function (Request $request) {
 
 
 
-Route::prefix('Booking')->middleware(['auth:api'])->group(function () {
+Route::prefix('Booking')->middleware(['auth:api','throttle:api'])->group(function () {
     Route::post('/create', [BookController::class, 'book']);
     Route::get('/view/{id}', [BookController::class, 'view']);
     Route::get('/viewAll/{id}', [BookController::class, 'viewAll'])->middleware('role:stadium_owner');
     Route::delete('/delete/{id}', [BookController::class, 'cancel'])->middleware('role:player|stadium_owner');
     Route::post('/pay', [PaymentController::class, 'pay']);
+    Route::post('/pay/force-complete', [PaymentController::class, 'forceComplete']);
 
 });
 Route::get('/stripe/onboarding/return', [StripeWebhookController::class, 'handleOnboardingReturn']);

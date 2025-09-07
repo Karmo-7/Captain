@@ -28,18 +28,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/users/{id}', function ($id) {
     return User::with('ads')->findOrFail($id);
 });
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
-Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+Route::middleware('throttle:auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+    Route::post('/auth/google-mobile', [AuthController::class, 'loginWithGoogleMobile']);
+    Route::post('/email/resend', [AuthController::class, 'resendVerification']);
+});
 
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
     ->middleware(['signed']) // ضروري للتحقق من التوقيع
     ->name('verification.verify');
-Route::post('/auth/google-mobile', [AuthController::class, 'loginWithGoogleMobile']);
-Route::post('/email/resend', [AuthController::class, 'resendVerification']);
-
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 

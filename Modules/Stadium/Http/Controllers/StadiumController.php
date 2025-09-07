@@ -57,7 +57,7 @@ class StadiumController extends Controller
     }
 
     public function view($id){
-        $stadium=Stadium::with('facility')->find($id);
+        $stadium = Stadium::with(['facility.ratings','ratings'])->find($id);
         if (!$stadium) {
             return response()->json([
                 'status' => false,
@@ -77,7 +77,7 @@ class StadiumController extends Controller
     }
 
     public function viewall(){
-        $stadiums=Stadium::all();
+        $stadiums = Stadium::with(['ratings', 'facility.ratings'])->get();
         return response()->json([
             'status' => true,
             'status_code' => 200,
@@ -117,7 +117,7 @@ class StadiumController extends Controller
     }
 
     public function get_all_owmer(){
-        $owners = User::role('stadium_owner')
+        $owners = User::role('stadium_owner','web')
             ->with('stadiums')
             ->get();
         return $owners;
@@ -179,7 +179,7 @@ class StadiumController extends Controller
             $query->where('price','>=',$minprice);
         }
         elseif(!empty($maxprice)){
-            $query->where('prise','<=',$maxprice);
+            $query->where('price','<=',$maxprice);
         }
         $stadiums = $query->get();
 

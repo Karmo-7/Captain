@@ -365,7 +365,30 @@ public function approve($id)
         'data' => $match->load('matchResults') // eager load results
     ]);
 }
+    public function openPublic(Request $request)
+    {
+        $q = \Modules\Invitations\Entities\InvitationMatch::query()
+            ->whereNull('league_id')
+            ->whereNull('receiver_team_id');
 
+        // (اختياري) استثناء دعوات فريقي حتى ما أشوف إعلاناتي
+        if ($request->filled('exclude_sender_team_id')) {
+            $q->where('sender_team_id', '!=', $request->exclude_sender_team_id);
+        }
+
+        // // (اختياري) تحميل العلاقات لعرض أسماء بدل IDs
+        // $q->with(['senderTeam', 'receiverTeam', 'stadium', 'slot'])
+        //   ->orderByDesc('created_at');
+
+        $matches = $q->get();
+
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Open public invitations retrieved successfully',
+            'data' => $matches
+        ]);
+    }
 
 
 

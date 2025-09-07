@@ -39,6 +39,6 @@ protected $table = 'stadium_slots';
 
     protected static function newFactory()
     {
-       // return \Modules\Stadium\Database\factories\StadiumSlotFactory::new();
+       return \Modules\Stadium\Database\factories\StadiumSlotFactory::new();
     }
 }

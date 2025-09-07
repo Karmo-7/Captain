@@ -13,18 +13,22 @@ class ProfileFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(), // ينشئ مستخدم تلقائياً
-            'first_name' => $this->faker->firstName,
-            'last_name' => $this->faker->lastName,
-            'birthdate' => $this->faker->date('Y-m-d'),
-            'address' => $this->faker->address,
-            'phone_number' => $this->faker->phoneNumber,
+            'user_id' => User::factory(),
+            'team_id' => null,
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'birthdate' => $this->faker->date(),
+            'address' => $this->faker->address(),
+            'phone_number' => $this->faker->unique()->numerify('##########'),
             'gender' => $this->faker->randomElement(['male', 'female']),
-            //'mine' => $this->faker->randomElement(['player', 'coach']),
-            'height' => $this->faker->numberBetween(160, 200),
+            'height' => $this->faker->numberBetween(150, 200),
             'weight' => $this->faker->numberBetween(50, 100),
-            'years_of_experience' => $this->faker->numberBetween(1, 10),
-            'avatar' => null, // أو مسار وهمي إن احتجت
+            'Sport' => $this->faker->randomElement(['Football', 'Basketball', 'Tennis']),
+            'positions_played' => $this->faker->word(),
+            'notable_achievements' => $this->faker->sentence(),
+            'years_of_experience' => $this->faker->numberBetween(0, 10),
+            'previous_teams' => $this->faker->company(),
+            'avatar' => null,
         ];
     }
 }

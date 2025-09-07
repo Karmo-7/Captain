@@ -12,7 +12,7 @@ class Sport extends Model
     use HasFactory;
 
 
-    protected $fillable = ['name','photo','max_players_per_team'];
+    protected $fillable = ['name','description','max_players_per_team'];
 
     public function stadiumRequests(){
         return $this->hasMany(StadiumRequest::class);
@@ -26,7 +26,7 @@ class Sport extends Model
 
     protected static function newFactory()
     {
-       // return \Modules\Sport\Database\factories\SportFactory::new();
+       return \Modules\Sport\Database\Factories\SportFactory::new();
     }
 
      public function teams()

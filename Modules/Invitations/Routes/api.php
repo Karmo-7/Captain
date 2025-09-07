@@ -16,7 +16,7 @@ use Modules\Invitations\Http\Controllers\UserMatchController;
 */
 
 Route::middleware('auth:api')->group(function () {
-
+    Route::get('invitation-matches/open', [InvitationMatchController::class, 'openPublic']);
     Route::get('leagues/{leagueId}/teams', [InvitationMatchController::class, 'teamsByLeague']);
 Route::get('invitations/accepted/league/{leagueId}', [TeamOwnerinvController::class, 'acceptedInvitationsByLeague']);
 Route::get('teams/league/{leagueId}', [TeamOwnerinvController::class, 'teamsInLeague']);
@@ -35,7 +35,7 @@ Route::post('invitations/{id}/reject', [TeamUsesrinvController::class, 'rejectIn
     //Route::put('leagues-update/{id}', [LeagueController::class, 'update']);
 
     // ✅ Routes خاصة بالـ team_ownerinv
-    Route::apiResource('team-ownerinv', TeamOwnerinvController::class);
+    Route::apiResource('team-ownerinv', TeamOwnerinvController::class)->middleware('team-ownerinv');
 
     // 1. كل الدعوات التي أرسلها owner لفرق
     Route::get('/invitations/owner/sent/{ownerId}', [TeamOwnerinvController::class, 'invitationsSentByOwner']);

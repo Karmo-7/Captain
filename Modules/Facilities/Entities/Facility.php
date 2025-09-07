@@ -11,7 +11,7 @@ class Facility extends Model
     use HasFactory;
 
     protected $fillable = ['stadium_id','name','quantity','description','photos'];
-
+    protected $appends = ['average_rating'];
 
     public function stadium(){
         return $this->belongsTo(Stadium::class);
@@ -20,13 +20,11 @@ class Facility extends Model
         'photos' => 'array',
     ];
 
-public function averageRating()
-{
-    return $this->ratings()->avg('rating');
-
-
-}
- public function ratings()
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->avg('rating');
+    }
+    public function ratings()
     {
         return $this->hasMany(\Modules\Rating\Entities\FacilityRating::class, 'facility_id');
     }

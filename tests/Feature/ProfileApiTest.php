@@ -22,7 +22,7 @@ class ProfileApiTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_user_can_create_profile()
+    public function test_player_can_create_profile()
     {
         Storage::fake('public');
 
@@ -37,21 +37,31 @@ class ProfileApiTest extends TestCase
             'address' => 'Somewhere',
             'phone_number' => '1234567890',
             'gender' => 'male',
-            //'mine' => 'player',
             'height' => 180,
             'weight' => 75,
+            'Sport' => 'Football',
+            'positions_played' => 'Striker',
             'years_of_experience' => 2,
             'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+            'notable_achievements' => 'MVP 2020',
+            'previous_teams' => 'Team A, Team B',
         ]);
 
         $response->assertStatus(201);
-        $response->assertJsonStructure(['message', 'profile']);
+        $response->assertJsonStructure([
+            'status',
+            'status_code',
+            'message',
+            'data' => ['profile']
+        ]);
+
+        $this->assertDatabaseHas('profiles', ['first_name' => 'John']);
     }
 
-    public function test_user_cannot_create_duplicate_profile()
+    public function test_player_cannot_create_duplicate_profile()
     {
         $user = User::factory()->create();
-        $user->assignRole('coach');
+        $user->assignRole('player');
         Passport::actingAs($user);
 
         Profile::factory()->create(['user_id' => $user->id]);
@@ -63,16 +73,17 @@ class ProfileApiTest extends TestCase
             'address' => 'Another place',
             'phone_number' => '1234567891',
             'gender' => 'female',
-            //'mine' => 'coach',
             'height' => 170,
             'weight' => 60,
+            'Sport' => 'Basketball',
+            'positions_played' => 'Center',
             'years_of_experience' => 4,
         ]);
 
         $response->assertStatus(409);
     }
 
-    public function test_user_can_update_own_profile()
+    public function test_player_can_update_own_profile()
     {
         Storage::fake('public');
 
@@ -80,7 +91,10 @@ class ProfileApiTest extends TestCase
         $user->assignRole('player');
         Passport::actingAs($user);
 
-        $profile = Profile::factory()->create(['user_id' => $user->id]);
+        $profile = Profile::factory()->create([
+            'user_id' => $user->id,
+            'first_name' => 'OldName'
+        ]);
 
         $response = $this->putJson("/api/profile/update/{$profile->id}", [
             'first_name' => 'UpdatedName',
@@ -91,7 +105,7 @@ class ProfileApiTest extends TestCase
         $this->assertDatabaseHas('profiles', ['first_name' => 'UpdatedName']);
     }
 
-    public function test_user_can_delete_own_profile()
+    public function test_player_can_delete_own_profile()
     {
         $user = User::factory()->create();
         $user->assignRole('player');
@@ -108,12 +122,24 @@ class ProfileApiTest extends TestCase
     public function test_profile_validation_fails_without_required_fields()
     {
         $user = User::factory()->create();
-        $user->assignRole('coach');
+        $user->assignRole('player');
         Passport::actingAs($user);
 
         $response = $this->postJson('/api/profile/create', []);
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['first_name', 'last_name', 'birthdate', 'address', 'phone_number', 'gender']);
+        $response->assertJsonValidationErrors([
+            'first_name',
+            'last_name',
+            'birthdate',
+            'address',
+            'Sport',
+            'phone_number',
+            'gender',
+            'height',
+            'weight',
+            'positions_played',
+            'years_of_experience',
+        ]);
     }
 }
