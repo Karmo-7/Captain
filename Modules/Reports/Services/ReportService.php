@@ -37,8 +37,8 @@ class ReportService
     $player->save();
 
     // تحديث التقرير تلقائياً إذا كان مرتبط بالحظر
-    if($report->status === 'unbanned') {
-        $report->status = 'resolved';
+    if($report->status === 'banned') {
+        $report->status = 'unbanned';
         $report->save();
     }
 

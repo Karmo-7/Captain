@@ -117,7 +117,7 @@ class StadiumController extends Controller
     }
 
     public function get_all_owmer(){
-        $owners = User::role('stadium_owner')
+        $owners = User::role('stadium_owner', 'web')
             ->with('stadiums')
             ->get();
         return $owners;
