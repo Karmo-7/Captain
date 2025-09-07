@@ -27,6 +27,7 @@ class ReportService
 }
 
 
+
    public static function unbanPlayerFromReport(int $reportId)
 {
     $report = Report::findOrFail($reportId);
@@ -36,7 +37,7 @@ class ReportService
     $player->save();
 
     // تحديث التقرير تلقائياً إذا كان مرتبط بالحظر
-    if($report->status === 'banned') {
+    if($report->status === 'unbanned') {
         $report->status = 'resolved';
         $report->save();
     }
